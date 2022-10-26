@@ -2,7 +2,7 @@
 // @name         美化学习界面
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  咦，好！美化哩！
+// @description  舒服捏
 // @author       YYc
 // @match        https://i.s.ecust.edu.cn/*
 // ==/UserScript==

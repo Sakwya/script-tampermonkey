@@ -2,7 +2,7 @@
 // @name         折叠课程
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  咦，好！折叠哩！
+// @description  给爷收捏
 // @author       YYc
 // @match        https://s.ecust.edu.cn/microuserkc/*
 // ==/UserScript==

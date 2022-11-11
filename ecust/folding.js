@@ -1,15 +1,15 @@
 // ==UserScript==
-// @name         折叠课程
-// @namespace    http://tampermonkey.net/
+// @name         华东理工大学本研——课程折叠机
+// @namespace    Skuyazlu
 // @version      0.1
-// @description  咦，好！折叠哩！
-// @author       YYc
+// @description  隐藏不需要显示的课程，让课程列表更加清晰
+// @author       Skuyazlu
 // @match        https://s.ecust.edu.cn/microuserkc/*
 // ==/UserScript==
 
 (function () {
     'use strict';
-    function clean(classn) {
+    const clean = function(classn) {
         document.getElementsByClassName(classn)[0].style.display = "none";
     };
     clean("w_head clearf");
@@ -54,7 +54,7 @@
     row.appendChild(bar);
     row.appendChild(swih);
     document.body.appendChild(row);
-    var hiddenclass = function (cid) {
+    const hiddenclass = function (cid) {
         document.getElementById(cid).className = "dis";
         document.querySelector("[cid='" + cid + "']").style.display = 'none';
         console.log("[cid='" + cid + "']");

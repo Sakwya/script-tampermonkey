@@ -109,7 +109,7 @@
     var side = creatdiv("side");
     //容器开关
     var side_s = creatdiv("side_s");
-    side_s.innerHTML = "隐藏背景菜单";
+    side_s.innerHTML = "显示背景菜单";
     side_s.onclick = function () {
         if (side_s.innerHTML == "显示背景菜单") {
             side_s.innerHTML = "隐藏背景菜单";
@@ -119,6 +119,7 @@
             side.style.left = '-200px';
         }
     };
+    side.style.left = '-200px';
     //容器主体
     var side_c = creatdiv("side_c");
     //选择新背景

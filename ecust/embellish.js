@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         华东理工大学本研——背景
+// @name         华东理工大学本研——自定义背景
 // @namespace    Skuyazlu
 // @version      0.2
 // @description  去除多余的信息，同时可以自定义改变背景。课程折叠机的伴生品。
@@ -43,8 +43,8 @@
         position: fixed;
         top: 10%;
         left: 0px;
-        -webkit-transition: left 0.6s;
-        transition: left 0.6s;
+        -webkit-transition: left 0.4s;
+        transition: left 0.4s;
       }
   
       #side_c {

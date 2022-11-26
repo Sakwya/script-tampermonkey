@@ -36,7 +36,7 @@
     document.body.innerHTML = "";
     document.body.appendChild(left_content).style.display = "none";
     document.body.appendChild(main_frame);
-    //定义侧拉栏
+    //定义侧拉栏样式
     var side_style = `
     #side {
         font-size: 14px;
@@ -196,5 +196,5 @@
     side.appendChild(side_c);
     document.body.appendChild(side);
     document.body.appendChild(dataurl);
-    //console.log("预定义输出结束");
+    //p("预定义输出结束");
 })();

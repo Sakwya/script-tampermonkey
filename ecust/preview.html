@@ -10,140 +10,1163 @@
       return div;
     }
   </script>
+  <link rel="stylesheet" type="text/css" href="./style.css">
   <style>
-    #side {
-      font-size: 14px;
+    body {
+      background: #0000;
+    }
+
+    .wzy_couros_row {
+      margin: 24px 0;
+      background: #fff1;
+      border: 0px;
+      border-radius: 10px 50px;
+      padding: 10px 50px;
+      cursor: pointer;
+      box-shadow: 2px 2px 2px #0006;
+    }
+
+    #course_root {
       position: fixed;
-      top: 10%;
-      left: 0px;
-      -webkit-transition: left 0.6s;
-      transition: left 0.6s;
+      left: 60%;
+      top: 0px;
+      -webkit-transition: top 0.6s;
+      transition: top 0.6s;
+      font-weight: bolder;
     }
 
-    #side_c {
-      padding: 10px;
-      background: #fffe;
-      width: 200px;
-      height: 200px;
-      overflow: hidden;
-      border-bottom-right-radius: 20px;
+    #course_b_row {
+      background: #fffa;
+      width: 240px;
+      height: 400px;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      border-bottom-left-radius: 20px;
       border: 1px solid;
-      border-left: 0px;
-      box-sizing: border-box;
+      border-top: 0px;
     }
 
-    #side_s {
-      box-sizing: border-box;
-      padding: 2px;
-      position: absolute;
-      right: -20px;
-      color: #222;
-      height: 120px;
-      width: 20px;
+    #course_b_row::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #course_b_row::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+      background: #eeee;
+    }
+
+    #course_b_row::-webkit-scrollbar-track {
+      border-radius: 0;
       background: #fffe;
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-      border: 1px solid;
-      border-left: 0px;
-      writing-mode: vertical-lr;
-      -webkit-writing-mode: vertical-lr;
-      text-align: center;
-      letter-spacing: 2px;
-      overflow: hidden;
-      cursor: pointer;
     }
 
-    #upload_bg{
-      margin: 10px 0px;
-    }
-    #b_save,#b_cancel,#b_remove {
+    #course_b_row div {
+      box-sizing: border-box;
+      color: #555;
+      margin: 10px;
+      padding: 0px 10px;
       height: 30px;
-      margin: 10px 0px;
-      box-sizing: border-box;
-      border: 1px solid;
+      width: 220px;
       border-radius: 5px;
-      color: #222;
-      background: #eee;
-      line-height: 30px;
-      padding: 0px 15px;
       cursor: pointer;
+      overflow: hidden;
     }
-    #b_save:hover,#b_cancel:hover,#b_remove:hover {
-      background: #ddd;
+
+    .course_b {
+      line-height: 28px;
+      border: 1px solid #555;
+      background: #fff;
+      box-shadow: 1px 1px 2px 1px lightgrey;
+    }
+
+    .course_b_h {
+      line-height: 30px;
+      border: 0px;
+      background: #fff;
+    }
+
+    .course_b:hover,
+    .course_b_h:hover {
+      background: #eee;
+    }
+
+    #course_s {
+      position: absolute;
+      right: 0px;
+      bottom: -20px;
+      color: #555;
+      height: 20px;
+      width: 100px;
+      background: #fffe;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      border: 1px solid;
+      border-top: 0px;
+      text-align: center;
+      line-height: 20px;
     }
   </style>
+  <script>
+    var run = function () {
+      //去除完全大概没用的东西
+
+      var course_list = document.body.getElementsByClassName("wzy_couros_row");
+      p(course_list)
+      var course_r = creatdiv("wzy_couros");
+      course_r.className = ("wzy_couros");
+      for (let i = 0; i < course_list.length; i++) {
+        course_list[i].setAttribute("cid", course_list[i].parentElement.getAttribute("cid"));
+        course_r.appendChild(course_list[i].cloneNode(true));
+      }
+      document.body.innerHTML = "";
+      document.body.appendChild(course_r);
+      //定义样式
+      //*******************
+      //定义下拉栏
+
+      var course_ele = course_r.children;
+      var course_root = creatdiv("course_root");
+      var course_b_row = creatdiv("course_b_row");
+      for (let i = 0; i < course_ele.length; i++) {
+        let course_b = document.createElement("div");
+        course_b.className = ("course_b");
+        course_b.setAttribute("show_row", true);
+        course_b.id = course_ele[i].getAttribute("cid");
+        course_b.addEventListener("click", function () {
+          let course_r = document.getElementById(this.id);
+          if (this.getAttribute("show_row") == "true") {
+            this.setAttribute("show_row", false);
+            this.className = "course_b_h"
+            document.querySelector("[cid='" + this.id + "']").style.display = 'none';
+          } else {
+            this.setAttribute("show_row", true);
+            this.className = "course_b"
+            document.querySelector("[cid='" + this.id + "']").style.display = '';
+          }
+        })
+        course_b.innerHTML = course_ele[i].children[2].firstElementChild.innerHTML;
+        course_b_row.appendChild(course_b);
+      }
+      course_root.appendChild(course_b_row);
+      var course_s = creatdiv("course_s");
+      course_s.innerHTML = "显示背景菜单";
+      course_s.onclick = function () {
+        if (course_s.innerHTML == "显示背景菜单") {
+          course_s.innerHTML = "隐藏背景菜单";
+          course_root.style.top = "0px";
+        } else {
+          course_s.innerHTML = "显示背景菜单";
+          course_root.style.top = '-400px';
+        }
+      }
+      course_root.style.top = '-400px';
+      course_root.appendChild(course_s);
+      document.body.appendChild(course_root);
+      const hiddenclass = function (cid) {
+        document.getElementById(cid).className = "dis";
+        document.querySelector("[cid='" + cid + "']").style.display = 'none';
+        console.log("[cid='" + cid + "']");
+        console.log(document.querySelector("[cid='" + cid + "']").style);
+      };
+
+    }
+
+  </script>
 </head>
 
-<body>
-  <script>
-    //容器基座
-    var side = creatdiv("side");
-    //容器开关
-    var side_s = creatdiv("side_s");
-    side_s.innerHTML = "隐藏背景菜单";
-    side_s.onclick = function () {
-      if (side_s.innerHTML == "显示背景菜单") {
-        side_s.innerHTML = "隐藏背景菜单";
-        side.style.left = "0px";
-      } else {
-        side_s.innerHTML = "显示背景菜单";
-        side.style.left = '-200px';
-      }
-    };
-    //容器主体
-    var side_c = creatdiv("side_c");
-    //选择新背景
-    var upload_bg = document.createElement('input');
-    upload_bg.id = "upload_bg";
-    upload_bg.type = "file";
-    upload_bg.accept = "image/*";
-    upload_bg.addEventListener("change", function () {
-      var URL = window.URL || window.webkitURL || window.mozURL
-      var fileObj = this.files[0]
-      console.log(this);
-      var container = document.getElementById('row');
-      var img = new Image()
-      var img_url = URL.createObjectURL(fileObj)
-      img.src = img_url;
-      console.log(img.src)
-      document.body.style.backgroundImage = "url(" + img_url + ")";
-      const image = new Image();
-      image.setAttribute('crossOrigin', 'anonymous');
-      image.src = img_url;
-      image.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-        const ext = img_url.substring(img_url.lastIndexOf('.') + 1).toLowerCase();
-        var dataUrl = canvas.toDataURL(`image/${ext}`);
-        console.log(dataUrl);
-        console.log(typeof (dataUrl));
-        document.getElementById("dataurl").innerText = dataUrl;
-      }
-    });
-    //保存背景数据
-    var b_save = creatdiv("b_save");
-    b_save.innerHTML = "保存背景";
-    var dataurl = creatdiv("dataurl");
-    dataurl.style.display="none";
-    //取消改变
-    var b_cancel = creatdiv("b_cancel");
-    b_cancel.innerHTML = "取消";
-    //恢复默认背景
-    var b_remove = creatdiv("b_remove");
-    b_remove.innerHTML = "恢复默认背景";
+<body onload="run();">
 
-    
-    side_c.appendChild(upload_bg);
-    side_c.appendChild(b_save);
-    side_c.appendChild(b_cancel);
-    side_c.appendChild(b_remove);
-    side.appendChild(side_s);
-    side.appendChild(side_c);
-    document.body.appendChild(side);
-    document.body.appendChild(dataurl);
-    console.log("预定义输出结束");
-  </script>
+  <div class="wzy_couros">
+    <ul>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-13 13:18:12" enddate="2024-08-13 13:18:12"
+        selfcourse="0" schoolid="44165" cid="441650000017423" createrid="5709" source="1" app="0"
+        clazzid="441650000035349" ckenc="bc668bd87c91261fb92b957c977e4964">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/cd4e23c449a0fcc954118759de878efe.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学英语Ⅲ（2022）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">外国语学院</span>
+              <span>教师：张凌志 马丽丽 张才宁 朱文晖 徐宝华 吴坚敏 杜海紫</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000017374" createrid="3935" source="1" app="0" clazzid="441650000040997"
+        ckenc="351a6f00dc6a425602e11b30d289af89">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/270_169c/f7e695316818e32b92aa6c2d0665971a.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(441650000017374,441650000040997,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学物理A（下）-习题课</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">物理学院</span>
+              <span>教师：张孟、范鹏东</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-09-18 14:40:26" enddate="2024-09-18 14:40:26"
+        selfcourse="0" schoolid="44165" cid="441650000020094" createrid="5995" source="1" app="0"
+        clazzid="441650000040917" ckenc="e33607c048dea38077a0f5b24ea97acf">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">形势与政策（3）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">化工学院</span>
+              <span>教师：于靖</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 0</span>
+              <span class="wzy_xuefen fl">学时： 4h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-23 10:46:45" enddate="2024-08-23 10:46:45"
+        selfcourse="0" schoolid="44165" cid="441650000019449" createrid="5848" source="1" app="0"
+        clazzid="441650000039265" ckenc="59ab472db13f068e068a1e76e5877661">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/5bdc16f8d34389a376379c08c9f51617.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学物理（下）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">物理学院</span>
+              <span>教师：谢海芬</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-22 21:39:13" enddate="2024-08-22 21:39:13"
+        selfcourse="0" schoolid="44165" cid="441650000019399" createrid="4757" source="1" app="0"
+        clazzid="441650000039125" ckenc="5983a2e9d18c0fcd4ae58b9d11f50647">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">体育(3)-高尔夫</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">体育科学与工程学院</span>
+              <span>教师：徐建刚</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 1</span>
+              <span class="wzy_xuefen fl">学时： 32h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-18 08:25:43" enddate="2024-08-18 08:25:43"
+        selfcourse="0" schoolid="44165" cid="441650000018713" createrid="6787" source="1" app="0"
+        clazzid="441650000037819" ckenc="3238e58113dba53b7db69f6714fc6c9f">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">毛泽东思想和中国特色社会主义理论体系概论(上)</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：包双叶</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2.5</span>
+              <span class="wzy_xuefen fl">学时： 48h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-17 07:57:36" enddate="2024-08-17 07:57:36"
+        selfcourse="0" schoolid="44165" cid="441650000018407" createrid="1220" source="1" app="0"
+        clazzid="441650000037183" ckenc="a59769b5ae4a57f7e70dba747bdb136b">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">动态网页设计</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：许卫林</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+              <span class="wzy_xuefen fl">学时： 32h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-15 22:02:40" enddate="2024-08-15 22:02:40"
+        selfcourse="0" schoolid="44165" cid="441650000018094" createrid="6168" source="1" app="0"
+        clazzid="441650000036577" ckenc="28726dd8361682a4631a75da0419378a">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="/img/mooc_cover.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">面向对象程序设计</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：梁建宁</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 3</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-15 09:49:36" enddate="2024-08-15 09:49:36"
+        selfcourse="0" schoolid="44165" cid="441650000017798" createrid="74833" source="1" app="0"
+        clazzid="441650000036025" ckenc="739286a3d11832e2982c4ebd86a10425">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/270_169c/a33f3089ab0263329b2101d8ada8a783.png">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">离散数学</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：杨海</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-08-14 17:14:08" enddate="2024-08-14 17:14:08"
+        selfcourse="0" schoolid="44165" cid="441650000017684" createrid="4551" source="1" app="0"
+        clazzid="441650000035795" ckenc="5f17b920788c5d19f868fb5c7bc9c37e">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="/img/mooc_cover.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">人工智能导论与基础算法实训</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：万永菁</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 1.5</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-04-14 15:37:45" enddate="2024-04-14 15:37:45"
+        selfcourse="0" schoolid="44165" cid="441650000016737" createrid="5431" source="1" app="0"
+        clazzid="441650000034059" ckenc="eb2a795dc77dd733487e5fd3da83e5a4">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学生心理健康教育</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">社会与公共管理学院</span>
+              <span>教师：徐玉兰</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+              <span class="wzy_xuefen fl">学时： 32h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-03-14 12:37:16" enddate="2024-03-14 12:37:16"
+        selfcourse="0" schoolid="44165" cid="441650000016285" createrid="1793" source="1" app="0"
+        clazzid="441650000033185" ckenc="4b2c6880fe3d5143a19ec16f2ca451e1">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">形势与政策（2）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：吴蓉</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 0</span>
+              <span class="wzy_xuefen fl">学时： 4h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-03-10 09:04:33" enddate="2024-03-10 09:04:33"
+        selfcourse="0" schoolid="44165" cid="441650000013771" createrid="74825" source="1" app="0"
+        clazzid="441650000033036" ckenc="5c939dbf9d69b9b641c53a6264da721b">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">军事理论</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">党委学生工作部（处）（武装部）</span>
+              <span>教师：赵妍君</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 1</span>
+              <span class="wzy_xuefen fl">学时： 36h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000012186" createrid="3935" source="1" app="0" clazzid="441650000030751"
+        ckenc="72036a521d5d65ea84a78887e5461925">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/8654dfd707c74c42390aab6eaa7b4def.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(441650000012186,441650000030751,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学物理（上）习题课</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">物理学院</span>
+              <span>教师：张孟、范鹏东</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000001282" createrid="3935" source="1" app="0" clazzid="441650000030746"
+        ckenc="5a43b9c0919c067d5d29140ce1cf9108">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/e47e9bb0f201151055602452786ca7da.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(441650000001282,441650000030746,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学物理（上、下）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">物理学院</span>
+              <span>教师：张孟</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-02-25 21:04:01" enddate="2024-02-25 21:04:01"
+        selfcourse="0" schoolid="44165" cid="441650000016044" createrid="2613" source="1" app="0"
+        clazzid="441650000032632" ckenc="623a25ef10a919b2e39a25c6cd8109fe">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">【实践教学】作业提交</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：徐国民、汪斌锋、张驰 等</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-23 16:23:17" enddate="2024-01-23 16:23:17"
+        selfcourse="0" schoolid="44165" cid="441650000014494" createrid="2301" source="1" app="0"
+        clazzid="441650000029448" ckenc="036b59fa75869885f6d10bed928eda7c">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/63cc95ce405427ab07feac94b1f9b53c.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">计算机职业实践</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：高雯</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-22 19:16:27" enddate="2024-01-22 19:16:27"
+        selfcourse="0" schoolid="44165" cid="441650000014422" createrid="889" source="1" app="0"
+        clazzid="441650000029275" ckenc="031ffc1202e2f31df9aee980eb570f03">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/193_114c/a33f3089ab0263329b2101d8ada8a783.png">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">Python程序设计(公选)</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：高建良</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2.5</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-20 13:54:06" enddate="2024-01-20 13:54:06"
+        selfcourse="0" schoolid="44165" cid="441650000014228" createrid="1730" source="1" app="0"
+        clazzid="441650000028847" ckenc="921a8406a245248d0d6f673400bd35de">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="/img/mooc_cover.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学英语Ⅱ</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">外国语学院</span>
+              <span>教师：l李萍</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-19 10:32:40" enddate="2024-01-19 10:32:40"
+        selfcourse="0" schoolid="44165" cid="441650000014097" createrid="5929" source="1" app="0"
+        clazzid="441650000028551" ckenc="c05952f67dc8ff2772dec9aacff49f97">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">体育(2)</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">体育科学与工程学院</span>
+              <span>教师：冯作龙</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000013918" createrid="672" source="1" app="0" clazzid="441650000028241"
+        ckenc="f178f3ea659beca969079690fe258ce9">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(441650000013918,441650000028241,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">高等数学（下）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">数学学院</span>
+              <span>教师：江志松</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 6</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-14 07:54:14" enddate="2024-01-14 07:54:14"
+        selfcourse="0" schoolid="44165" cid="441650000013846" createrid="2531" source="1" app="0"
+        clazzid="441650000028107" ckenc="c2787872ad96fb9059cf795b5ca6fc0c">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="/img/mooc_cover.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">算法与数据结构</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：叶琪</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 3.5</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-12 11:15:44" enddate="2024-01-12 11:15:44"
+        selfcourse="0" schoolid="44165" cid="441650000013713" createrid="6410" source="1" app="0"
+        clazzid="441650000027796" ckenc="108822ec322d065ed63135862e44627a">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">中国近现代史纲要</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：丁业鹏</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 3</span>
+              <span class="wzy_xuefen fl">学时： 56h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-11-11 08:28:38" enddate="2023-11-11 08:28:38"
+        selfcourse="0" schoolid="44165" cid="441650000013392" createrid="2118" source="1" app="0"
+        clazzid="441650000027116" ckenc="04ede8063d0eb633b8ec4ed70da76022">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">创造性思维与创新方法</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">创新创业教育中心</span>
+              <span>教师：司忠业</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 1</span>
+              <span class="wzy_xuefen fl">学时： 16h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-10-13 10:28:36" enddate="2023-10-13 10:28:36"
+        selfcourse="0" schoolid="44165" cid="441650000013219" createrid="2073" source="1" app="0"
+        clazzid="441650000026683" ckenc="29f2ce6b65b77397f1207accd378ea45">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">形势与政策（1）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：王阳</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 0</span>
+              <span class="wzy_xuefen fl">学时： 4h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-09-27 20:25:38" enddate="2023-09-27 20:25:38"
+        selfcourse="0" schoolid="44165" cid="441650000013102" createrid="4347" source="1" app="0"
+        clazzid="441650000026442" ckenc="916570bda9c8678cffa4a7ad2ddfe196">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">习近平新时代中国特色社会主义思想概论</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：朱忆天</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+              <span class="wzy_xuefen fl">学时： 32h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-09-26 15:33:19" enddate="2023-09-26 15:33:19"
+        selfcourse="0" schoolid="44165" cid="441650000013083" createrid="1246" source="1" app="0"
+        clazzid="441650000026400" ckenc="0cd109391837030d36baee81db37f535">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">计算机类专业概论</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：郭卫斌</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000013024" createrid="2859" source="1" app="0" clazzid="441650000026218"
+        ckenc="b6da13a8dc42a794f8cf77eb1e7d4c2d">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/270_169c/431bb2d16b841851a1b3f304e957acdd.PNG">
+            <p class="wzy_couros_layout" onclick="tuike(441650000013024,441650000026218,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">计算机导论-2021-2022-1</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">信息科学与工程学院</span>
+              <span>教师：翟洁</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2.5</span>
+              <span class="wzy_xuefen fl">学时： 40h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+              title="      本课程使计算机专业的学生刚进入大学就能全面了解计算机领域的专业知识、最新发展及应用。本课程遵循建构主义的教学思想，将实现价值塑造、能力培养、知识传授三位一体的教学目标。通过本课程的学习，有助于学生对所在专业的专业方向、基本知识框架和主要课程有一个整体性、概括性的了解，树立专业学习的信心，激发并培养专业学习的兴趣和求知欲。为以后学习和掌握专业知识，进行科学研究奠定基础。">
+              本课程使计算机专业的学生刚进入大学就能全面了解计算机领域的专业知识、最新发展及应用。本课程遵循建构主义的教学思想，将实现价值塑造、能力培养、知识传授三位一体的教学目标。通过本课程的学习，有助于学生对所在专业的专业方向、基本知识框架和主要课程有一个整体性、概括性的了解，树立专业学习的信心，激发并培养专业学习的兴趣和求知欲。为以后学习和掌握专业知识，进行科学研究奠定基础。
+            </dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000012658" createrid="2478" source="1" app="0" clazzid="441650000026167"
+        ckenc="f64e5200c0a1000423283e41fd454ba8">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(441650000012658,441650000026167,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">高等数学（上）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">数学学院</span>
+              <span>教师：江志松</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-09-22 06:30:56" enddate="2023-09-22 06:30:56"
+        selfcourse="0" schoolid="44165" cid="441650000012972" createrid="5929" source="1" app="0"
+        clazzid="441650000026062" ckenc="854f6427ff244e0fc4ffbe3363fa8c6d">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/6ce77a10dd3268daa7ba6c93e5e76459.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">体育(1)</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">体育科学与工程学院</span>
+              <span>教师：冯作龙</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="44165"
+        cid="441650000010610" createrid="923" source="1" app="0" clazzid="441650000021205"
+        ckenc="419e84446ded66c8a17a4326373e8f06">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/270_169c/55f61aee5ba85ef3af66e4d7fcbe9b17.png">
+            <p class="wzy_couros_layout" onclick="tuike(441650000010610,441650000021205,1,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">线性代数 (21级)</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">数学学院</span>
+              <span>教师：鲍亮</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 3</span>
+              <span class="wzy_xuefen fl">学时： 48h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2021-09-10 10:26:57" enddate="2023-09-10 10:26:57"
+        selfcourse="0" schoolid="44165" cid="441650000012751" createrid="5562" source="1" app="0"
+        clazzid="441650000025470" ckenc="1911d054141eef73f99aef1724ca0f65">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="http://cs.e.ecust.edu.cn/star3/origin/80913fdeb0d8ad1865cede761c2f7ef5.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">思想道德与法治</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right:28px">马克思主义学院（人文科学研究院）</span>
+              <span>教师：刘捷等</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="22894" cid="200903091"
+        createrid="34396614" source="0" app="0" clazzid="61272015" ckenc="85664a7f4991cf28af3d5b1f65b7ca02">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/8e959d96fbdb2dd83f6c194e2551055e.png">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">大学物理实验</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right: 28px; display: none;"></span>
+              <span>教师：钟菊花等</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+              <span class="wzy_xuefen fl">学分 2</span>
+              <span class="wzy_xuefen fl">学时： 60h</span>
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="大学物理实验是对学生进行科学实验基本训练的一门独立的必修课，是理工科学生进入大学以后受到系统实验方法和实验技能训练的开端。
+课程的组成分为基础型实验、综合型实验、设计型实验和课题研究型实验，形成了从低到高，从基础到前沿，从接受知识到培养能力和素养，逐步提高的物理实验课程体系。
+物理实验具有丰富的实验思想、实验方法和实验手段。旨在培养学生科学实验能力、严谨的治学态度、活跃的创新意识，提高学生理论联系实际和适应科技发展的综合应用能力。
+">大学物理实验是对学生进行科学实验基本训练的一门独立的必修课，是理工科学生进入大学以后受到系统实验方法和实验技能训练的开端。
+              课程的组成分为基础型实验、综合型实验、设计型实验和课题研究型实验，形成了从低到高，从基础到前沿，从接受知识到培养能力和素养，逐步提高的物理实验课程体系。
+              物理实验具有丰富的实验思想、实验方法和实验手段。旨在培养学生科学实验能力、严谨的治学态度、活跃的创新意识，提高学生理论联系实际和适应科技发展的综合应用能力。
+            </dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="2022-01-15 16:27:21" enddate="2024-01-15 16:27:21"
+        selfcourse="0" schoolid="22894" cid="222521542" createrid="105102221" source="0" app="0" clazzid="50360316"
+        ckenc="63906be8232cc35a833ad0109703fdbc">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/270_169c/6ce77a10dd3268daa7ba6c93e5e76459.png">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">计算机网络及应用-2022</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right: 28px; display: none;"></span>
+              <span>教师：马海英</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="245" cid="221201035"
+        createrid="34773225" source="0" app="0" clazzid="49400920" ckenc="855689b824e76e92ffc393b1b4e0aea7">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/51abb09b7c8723758279b72f14dbff78.jpg">
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">上海市大学生安全教育（2021级）</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right: 28px; display: none;"></span>
+              <span>教师：</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+      <li style="cursor:pointer" tstatus="0" begindate="" enddate="" selfcourse="0" schoolid="22894" cid="204666772"
+        createrid="65054898" source="0" app="0" clazzid="45446763" ckenc="b0c3435f43caa104073812be53d46ff6">
+        <div class="wzy_couros_row">
+          <div class="wzy_couros_pic">
+            <img src="https://p.ananas.chaoxing.com/star3/origin/78f78be50c71105d77f0d50039794235.jpg">
+            <p class="wzy_couros_layout" onclick="tuike(204666772,45446763,0,0,0)">退课 </p>
+          </div>
+          <!-- 填充微专业课程列表 -->
+          <div class="wzyclist"></div>
+          <dl class="wzy_couros_cont">
+            <dt class="wzy_couros_name">计算机程序设计</dt>
+            <dd class="wzy_couros_xueyuan">
+              <!-- 课程院系 -->
+              <span style="margin-right: 28px; display: none;"></span>
+              <span>教师：郭卫斌</span>
+            </dd>
+            <dd class="wzy_couros_keshi">
+
+              <div class="wkccj fl"><span class="wcourgr">成绩<i class="wcourgrhov"
+                    style="height: 30px;"><span>线上成绩：0</span><span>线下成绩：0</span></i></span></div>
+            </dd>
+            <!-- 课程简介 -->
+            <dd class="wzy_couros_text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"></dd>
+          </dl>
+        </div>
+      </li>
+
+
+    </ul>
+  </div>
 </body>

@@ -4,9 +4,9 @@
 // @version      0.2
 // @description  隐藏不需要显示的课程，顺带阿巴阿巴一下。
 // @author       Skuyazlu
-// @grant GM_addStyle
-// @grant GM_setValue
-// @grant GM_getValue
+// @grant        GM_addStyle
+// @grant        GM_setValue
+// @grant        GM_getValue
 // @match        https://s.ecust.edu.cn/microuserkc/*
 // ==/UserScript==
 

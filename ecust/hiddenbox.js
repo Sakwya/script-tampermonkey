@@ -135,7 +135,6 @@
 }
 
 .wzy_couros_pic {
-    opacity: 0.75;
     border-radius: 4.5rem 0.5rem 0.5rem 0.5rem;
 }
 

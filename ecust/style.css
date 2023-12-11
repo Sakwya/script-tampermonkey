@@ -7,7 +7,7 @@ body {
     margin: auto;
 }
 
-.wzy_couros_row {
+.wzy_courosColumn {
     margin: 0.25rem 0;
     background: linear-gradient(90deg, #fff5, #aaf5);
     border: 0px;
@@ -20,7 +20,7 @@ body {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.wzy_couros_row:hover {
+.wzy_courosColumn:hover {
     transform: rotate(1deg) scale(1.05);
     box-shadow: 1px 1px 6px #00f6;
 }
@@ -34,7 +34,7 @@ body {
     font-weight: bolder;
 }
 
-#course_b_row {
+#courseToggleBtnColumn {
     background: #fffa;
     width: 240px;
     height: 400px;
@@ -45,21 +45,21 @@ body {
     border-top: 0px;
 }
 
-#course_b_row::-webkit-scrollbar {
+#courseToggleBtnColumn::-webkit-scrollbar {
     width: 6px;
 }
 
-#course_b_row::-webkit-scrollbar-thumb {
+#courseToggleBtnColumn::-webkit-scrollbar-thumb {
     border-radius: 6px;
     background: #eeee;
 }
 
-#course_b_row::-webkit-scrollbar-track {
+#courseToggleBtnColumn::-webkit-scrollbar-track {
     border-radius: 0;
     background: #fffe;
 }
 
-#course_b_row div {
+#courseToggleBtnColumn div {
     box-sizing: border-box;
     color: #555;
     margin: 10px;
@@ -71,21 +71,21 @@ body {
     overflow: hidden;
 }
 
-.course_b {
+.courseToggleBtn {
     line-height: 28px;
     border: 1px solid #555;
     background: #fff;
     box-shadow: 1px 1px 2px 1px lightgrey;
 }
 
-.course_b_h {
+.courseToggleBtn_h {
     line-height: 30px;
     border: 0px;
     background: #fff;
 }
 
-.course_b:hover,
-.course_b_h:hover {
+.courseToggleBtn:hover,
+.courseToggleBtn_h:hover {
     background: #eee;
 }
 

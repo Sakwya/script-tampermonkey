@@ -1,0 +1,7 @@
+.wcourgr{display: inline-block;width: 60px;background: #ccc;text-align: center;border-radius: 3px;position: relative;}
+.wcourgr:hover{background: #09f;color:#fff}
+.wcourgrhov{padding-top: 20px;position: absolute;left:0;width:154px;height:60px;font-style: normal;top: 28px;background: url('../images/bgcj.png') no-repeat top center;color:#fff;display: none;}
+.wcourgrhov span{display: block;}
+.wcourgr:hover .wcourgrhov{display: block;}
+
+

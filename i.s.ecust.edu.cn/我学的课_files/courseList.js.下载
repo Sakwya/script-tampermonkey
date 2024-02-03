@@ -1,0 +1,675 @@
+function gotosetFiled(_this,courseId,isFiled,isHide){ 
+	isHide = isHide || 0;
+	if(isHide == 1) {
+		WAY.box.hide();
+	}
+	
+	// 使用DOM0级事件绑定（处理多次绑定alert弹出问题  -苏萍萍）
+	$("#courseFiledConfirm")[0].onclick = function(){
+		setFiled2(_this,courseId,isFiled,isHide);
+	}
+	WAY.box.show({'divid':'coursefiledDiv','topsplit':'3','top':'218'});
+}
+
+/**
+ * 归档/取消归档 使用confirm提示
+ * @param _this
+ * @param courseId
+ * @param isFiled
+ * @returns
+ */
+function setFiled(_this,courseId,isFiled){
+	var atip = isFiled==0 ? "取消归档" : "归档";
+	var tipContent = isFiled==0 ? "确认取消归档？" : "确认归档该课程？";
+	var tipname = $(_this).attr("tipname") || "";
+	if(tipname != "") {
+		atip = tipname;
+		tipContent = "确认"+tipname+"？";
+	}
+	
+	var source = $(_this).parents(".zmy_item").attr("source") || 0;
+	if(confirm(tipContent)){
+		$.ajax({
+	        type: "get",
+	        url: "/courselist/setFiled",
+	        data:{
+				"courseId":courseId,
+				"isFiled":isFiled,
+				"source":source
+			},
+	        dataType:"json",
+	        success: function(content){
+	        	if(isFiled == 1) {
+	        		WAY.box.hide();
+	        	}
+	        	if(content.status){
+	        		if(isFiled==0){
+	        			alert(atip+"成功");
+	        			$(_this).parents(".zgu_item").remove();
+	        		}else{ 
+	        			alert(atip+"成功");
+	        			$(_this).parents(".zmy_item").remove();
+	        		}
+	        	}else{
+	        		alert(atip+"失败请稍后重试");
+	        	}
+		    }
+		});
+	}
+}
+
+/**
+ * 归档/取消归档，使用弹层
+ * @param _this
+ * @param courseId
+ * @param isFiled
+ * @returns
+ */
+function setFiled2(_this,courseId,isFiled,isHide){
+	var atip = isFiled==0 ? "恢复" : "删除";
+	var tipname = $(_this).attr("tipname") || "";
+	if(tipname != "") {
+		atip = tipname;
+	}
+	isHide = isHide || 0;
+	var source = $(_this).parents(".zmy_item").attr("source") || 0;
+	
+	// 是否有往期课程（往期课程归档刷新页面，没有往期课程直接删除div）
+	var isWq = $(_this).parents(".zmy_item").find(".w_lookcour").length;
+	
+	$.ajax({
+		type: "get",
+		url: "/courselist/setFiled",
+		data:{
+			"courseId":courseId,
+			"isFiled":isFiled,
+			"source":source
+		},
+		dataType:"json",
+		success: function(content){
+			WAY.box.hide();
+			if(content.status){
+				if(isWq > 0) {
+					loadCourseList();
+				}
+				else {
+					if(isFiled==0){
+						alert(atip+"成功");
+						$(_this).parents(".zgu_item").remove();
+					}else{
+						alert(atip+"成功");
+						$(_this).parents(".zmy_item").remove();
+					}
+					
+					if(isHide == 1) {
+						// 判断是否还存在往期课程，如不存在移除课程往期课程按钮（处理往期课程归档点击往期没有课程情况）
+						if($("#pastCourse .w_pastcourlist dl").length == 0) {
+							var courseident = $.trim($("#pastCourse h3 i em").text());
+							$("#allCourseList dl[courseidentifier='"+courseident+"']").find(".w_lookcour").hide();
+						}
+					}
+				}
+				
+			}else{
+				alert(atip+"失败请稍后重试");
+			}
+		}
+	});
+	
+	
+}
+
+// 删除课程
+function deleteCourse(_this,courseId) {
+	var tip = "您确定要彻底删除吗？删除将不可恢复!";
+	var tipname = $(_this).attr("tipname") || "";
+	if(tipname != "") {
+		tip = "您确定要"+tipname+"吗？"+tipname+"将不可恢复!";;
+	}
+	
+	var source = $(_this).parents("li").attr("source") || 0;
+	var belongSchoolId = $(_this).parents("li").attr("schoolid") || "";
+	
+	if(confirm(tip)){
+		$.ajax({
+	        type: "get",
+	        url: "/courselist/delete",
+	        data:{
+	        	"belongSchoolId":belongSchoolId,
+	        	"courseId":courseId,
+	        	"source":source
+	        },
+	        dataType:"json",
+	        success: function(content){
+			  if(content.status){
+				   alert("删除成功");
+				   $(_this).parents(".zgu_item").remove();
+			  }else{
+			      alert("删除失败请稍后重试");
+			  }
+		    }
+	     });
+	}
+}
+
+
+
+
+function toActive(_this,courseId,id,year,term){
+	var courseName=$(_this).parents(".zmy_item").find("dt[name='courseNameHtml']").html() || "";
+	if(courseName == "") {
+		courseName = $(_this).parents(".zmy_item").find(".w_r_name").text();
+	}
+	$("span[name='avtiveNameHolder']").html(courseName);
+	$("span[name='avtiveCourseIdHolder']").html(courseId);
+	$("#kkxq").val(year+term);
+	$("#id").val(id);
+	$("#oldMoocId").html(0);
+	
+	showActiveWin();
+}
+
+/**
+ * 课程激活
+ */
+var activeFlag = 0;
+function active(){
+	if(activeFlag == 1){
+		alert("课程正在创建，请稍后!");
+		return;
+	}
+	activeFlag = 1;
+	$("#activeForm").submit();
+	
+	// 不是复制课程 弹出课程创建提示
+	if($("#curCloneWin").css("display") == "none") {
+		WAY.box.show({'divid':'jwkcAlert','topsplit':'3','top':'218'});
+	}
+}
+
+function toClone(_this){
+
+	WAY.box.hide();
+	
+	//WAY.box.show({'divid':'toCloneWin','topsplit':'3'});
+	boxShowWay("toCloneWin",530);
+	
+	var id=$("#id").val();
+	$.ajax({
+        type: "get",
+        url: "/courselist/cloneList",
+        data:{
+        	"id":id
+        },
+        dataType:"html",
+        success: function(content){
+        	$("#cloneListDataHolder").html(content);
+	    }
+     });
+}
+
+/**
+ * 显示激活弹层
+ * @returns
+ */
+function showActiveWin(){
+	//WAY.box.show({'divid':'activeWin','topsplit':'3','top':'100'});
+	boxShowWay("activeWin");
+}
+
+var cloneflag = 0;
+function clone(){
+	if(cloneflag == 1){
+		return;
+	}
+	cloneflag = 1;
+	var choose=$(".zcc_selected");
+	var num=choose.size();
+	if(num==0){
+		alert("请选中一门要复制数据的课程");
+		cloneflag = 0;
+	}else if(num==2){
+		alert("只能选中一门课");
+		cloneflag = 0;
+	}else{
+		$("#oldMoocId").val($(".zcc_selected").attr("moocid"));
+		
+		WAY.box.hide();
+		
+		WAY.box.show({'divid':'curCloneWin','topsplit':'3','top':'218'});
+		active();
+	}
+}
+
+// 课程发布
+function coursePublish(_this,cid) {
+	$.ajax({
+        type: "post",
+        url: "/courselist/setcoursepublish",
+        data:{
+        	"courseid":cid,
+        	"status":1
+        },
+        dataType:"json",
+        success: function(data){
+        	if(data != -1) {
+        		alert("课程已成功发布，点击取消按钮可取消发布");
+        		$(_this).removeClass("kcFaBu");
+        		$(_this).addClass("kcFaBuQx");
+        		$(_this).attr('onclick','').unbind('click').click(function(){coursePubCancel(_this,cid);});
+        	}
+	    }
+	});
+	
+}
+
+function coursePublish2(_this,cid) {
+	$.ajax({
+		type: "post",
+		url: "/courselist/setcoursepublish",
+		data:{
+			"courseid":cid,
+			"status":1
+		},
+		dataType:"json",
+		success: function(data){
+			if(data != -1) {
+				WAY.box.show({'divid':'coursePublish','topsplit':'3','top':'218'});
+//				alert("课程已成功发布，点击取消按钮可取消发布");
+				$(_this).html("取消发布");
+				$(_this).attr('onclick','').unbind('click').click(function(){coursePubCancel2(_this,cid);});
+			}
+		}
+	});
+	
+}
+
+// 取消发布
+function coursePubCancel(_this,cid) {
+	$.ajax({
+        type: "post",
+        url: "/courselist/setcoursepublish",
+        data:{
+        	"courseid":cid,
+        	"status":0
+        },
+        dataType:"json",
+        success: function(data){
+        	if(data != -1) {
+        		alert("课程已取消发布，点击发布按钮可重新发布");
+        		$(_this).removeClass("kcFaBuQx");
+        		$(_this).addClass("kcFaBu");
+        		$(_this).attr('onclick','').unbind('click').click(function(){coursePublish(_this,cid);});
+        	}
+	    }
+	});
+}
+
+function coursePubCancel2(_this,cid) {
+	var url = location.href;
+	var refer = encodeURIComponent(url);
+	
+	$.ajax({
+		type: "post",
+		url: "/courselist/setcoursepublish",
+		data:{
+			"courseid":cid,
+			"status":0
+		},
+		dataType:"json",
+		success: function(data){
+			if(data != -1) {
+				$(_this).text("发布到门户");
+				$(_this).attr('onclick','');
+				$(_this).attr('href','/courselist/toCoursePublish?courseid='+cid+'&refer='+refer);
+				
+				if($("#coursePublish").length > 0) {
+					$("#publisMsg").html('课程已取消发布，点击发布按钮可重新发布。');
+					WAY.box.show({'divid':'coursePublish','topsplit':'3','top':'218'});
+				}else {
+					alert('课程已取消发布，点击发布按钮可重新发布。');
+				}
+				
+			}
+		}
+	});
+}
+
+function toCoursePublish(cid) {
+	var url = location.href;
+	var refer = encodeURIComponent(url);
+	
+	location.href = '/courselist/toCoursePublish?courseid='+cid+'&refer='+refer;
+}
+
+// 取消课程发布
+function coursePubCancelCnu(_this,cid) {
+	$.ajax({
+		type: "post",
+		url: "/courselist/setcoursepublish",
+		data:{
+			"courseid":cid,
+			"status":0
+		},
+		dataType:"json",
+		success: function(data){
+			if(data != -1) {
+				$(_this).text("发布到门户");
+				$(_this).attr('onclick','');
+				$(_this).attr('href','/courselist/toCnuCoursePublish?courseid='+cid);
+				
+				if($("#coursePublish").length > 0) {
+					$("#publisMsg").html('课程已取消发布，点击发布按钮可重新发布。');
+					WAY.box.show({'divid':'coursePublish','topsplit':'3','top':'218'});
+				}else {
+					alert('课程已取消发布，点击发布按钮可重新发布。');
+				}
+			}
+		}
+	});
+}
+
+
+function getMajor() {
+	var gid = $("#group1").val();
+	if(gid > 0) {
+		$.ajax({
+			type:"get", 
+			url:"/getGroupByGid?gid="+gid, 
+			success:function(data) {
+				var json = eval(data);
+				var selc = "";
+				if(json.length > 0) {
+					selc = "<option value=\"0\">请选择</option>";
+					for(var i = 0; i<json.length;i++) {
+						selc += "<option value=\""+json[i].id+"\">"+json[i].groupname+"</option>";
+					}
+				}else {
+					selc = "<option value=\"0\">请选择</option>";
+				}
+				$("#group2").html(selc);
+			}
+		});
+		
+	}
+}
+
+// 归档页面
+function gotoViewFiledCourses() {
+	var begin = encodeURI($("#beginInp").val() || "");
+	var end = encodeURI($("#endInp").val() || "");
+	var showContent = encodeURI($("#showContent").val() || "");
+	var showType = $("#showType").val() || "";
+	
+	var url = location.href;
+	var refer = encodeURIComponent(url);
+	location.href="/courselist/teacherfiled?showType="+showType+"&begin="+begin+"&end="+end+"&showContent="+showContent+"&refer="+refer;
+}
+
+/**
+ * 团队激活App，审核失败课程删除
+ * @param obj
+ * @param applyCourseId
+ * @param type 【0=删除，1=取消申请】
+ * @returns
+ */
+function delApplyCourse2(obj,applyCourseId,type,isHide){
+	isHide = isHide || 0;
+	// 是否有往期课程（往期课程归档刷新页面，没有往期课程直接删除div）
+	var isWq = $(obj).parents(".zmy_item").find(".w_lookcour").length;
+	
+	var tipContent = type == 1 ? "确定要取消申请吗？" : "确定要删除吗？";
+	var status = type || -2;
+	if(confirm(tipContent)){
+		$.ajax({ 
+			type:"post", 
+			url:"/courselist/delApplyCourse", 
+			data:{
+				"applyCourseId" : applyCourseId,
+				"status":status
+			}, 
+			success:function(content) {
+				if(isWq > 0) {
+					loadCourseList();
+				}
+				else {
+					if(content != -1) {
+						alert(type == 1 ? "取消申请成功" : "删除成功");
+						$(obj).parents(".zmy_item").remove();
+						
+						if(isHide == 1) {
+							// 判断是否还存在往期课程，如不存在移除课程往期课程按钮（处理往期课程归档点击往期没有课程情况）
+							if($("#pastCourse .w_pastcourlist dl").length == 0) {
+								var courseident = $.trim($("#pastCourse h3 i em").text());
+								$("#hl_jskc dl[courseidentifier='"+courseident+"']").find(".w_lookcour").hide();
+							}
+						}
+					}else {
+						alert("操作失败，请稍后重试");
+					}
+				}
+				
+			}
+		});
+	}
+}
+
+//未审核通过课程删除
+function delApplyCourse(obj,applyCourseId){
+	if(!confirm("确认删除？")){
+		return;
+	}
+	$.ajax({ 
+		type:"post", 
+		url:"/courselist/delApplyCourse", 
+		data:{
+			"applyCourseId" : applyCourseId
+		}, 
+		success:function(content) {
+			 $(obj).parents(".zgu_item").remove();
+		}
+	});
+}
+
+// 同步课程
+function tbCourse(cid,cname,oldCId,oldDName,oldCName,isconect){
+	$("#courseIdClick").val(cid);
+	$("#courseName").val(cname);
+	$("#oldid").val(oldCId);
+	var flag = $("#connectFlag_"+cid).val();
+	if(flag == 1){
+		if(oldCId.length <= 0){
+			oldCId = $("#connectOldId_" + cid).val();
+		}
+		if(oldDName.length <= 0){
+			oldDName = $("#connectOldCourseGroupname_" + cid).val();
+		}
+		if(oldCName.length <= 0){
+			oldCName = $("#connectOldName_" + cid).val();
+		}
+		$("#flag").val(isconect);
+	    $("#oldCId").html(oldCId);
+		$("#oldCName").html(oldCName);
+		$("#oldDName").html(oldDName);
+		displayCourseClazz(oldCId);
+		$("#hasContentionInfo").show();
+		$("#connectionInfo").show();
+	}else{
+		$("#noneContentionInfo").show();
+	}
+	WAY.box.show({'divid':'jwcoursedata_zjmc','topsplit':'3','top':'85'});
+}
+
+function displayCourseClazz(kcbh){
+	var courseId = $("#courseIdClick").val();
+	$.ajax({ 
+		type:"get", 
+		url:"/courselist/getTeacherkc", 
+		data:{
+			"courseId":courseId,
+			"kcbh" : kcbh
+		}, 
+		success:function(content) {
+			 $("#hasContentionInfo").html(content);
+		}
+	});
+}
+
+// 返回课程页
+function backTeacherCourseList(){
+	var refer = $("#refer").val() || "";
+	if(refer != "") {
+		location.href = refer;
+		return;
+	}
+	
+	var begin = encodeURI($("#beginInp").val());
+	var end = encodeURI($("#endInp").val());
+	var showContent = encodeURI($("#showContent").val());
+	var showType = $("#showType").val() || "";
+	
+	location.href="/courselist/teacher?showType="+showType+"&begin="+begin+"&end="+end+"&showContent="+showContent;
+}
+
+// 加载课程简介，处理分页
+var cnuPageSize = 5;
+var cnuTotalPage = 1;
+function loadCourseDescription(pagesize) {
+	pagesize = pagesize || 5;
+	cnuPageSize = pagesize;
+	
+	$(".w_bot_li").each(function(index) {
+		var $li = $(this);
+		var cid = $li.attr("cid") || 0;
+		
+		if((index+1) > pagesize) {
+			$li.hide();
+		}
+		
+		if(cid && cid != "") {
+			$.ajax({  
+        		type: "get",
+        		url: "/courselist/getCoursedescription?cid="+cid,
+        		success: function(content){
+					if(content.length > 80) {
+						content = content.substring(0,80)+"...";
+					}
+        			$li.find(".w_right .w_r_txt").html(content);
+        		}
+        	});
+		}
+	});
+	
+	var total = $(".w_bot_li").length;
+	cnuTotalPage = total % pagesize > 0 ? parseInt(total/pagesize) + 1 : parseInt(total/pagesize);
+	page.showPage(1,cnuTotalPage,"cnuTurnPage","pagination","<<",">>","&lt;","&gt;");
+}
+
+//下一页
+function cnuTurnPage(pageno) {
+	var start = (pageno -1) * cnuPageSize;
+	var end = pageno * cnuPageSize;
+	$(".w_bot_li").each(function(index) {
+		var num = index + 1;
+		if(num > start && num <= end) {
+			$(this).show();
+		}else {
+			$(this).hide();
+		}
+	})
+	page.showPage(pageno,cnuTotalPage,"cnuTurnPage","pagination","<<",">>","&lt;","&gt;");
+}
+
+// 去编辑教学文件
+function toEditCourseFiles(sid,cid) {
+	var url = location.href;
+	var refer = encodeURIComponent(url);
+	
+	sid = sid || 0;
+	cid = cid || "";
+	
+	location.href = "/buildingCourse/toEditCourseFiles?id="+sid+"&courseId="+cid+"&refer="+refer;
+}
+//提交教学文件审核
+function tosubmitsh(sid,cid,type) {
+	sid = sid || 0;
+	cid = cid || "";
+	$.ajax({
+		type : "post", 
+		url : "/buildingCourse/updatestatus", 
+		data : {
+			"id" : sid,
+			"courseId":cid,
+			"type":type
+		}, 
+		success : function(data) {
+			if(data>0){
+				location.href = location.href;
+			}
+			else{
+				alert("操作失败，请稍后重试");
+			}
+		}
+	});
+}
+
+// 查看教学文件
+function toViewComment(sid) {
+	sid = sid || 0;
+	
+	var url = location.href;
+	var refer = encodeURIComponent(url);
+	
+	location.href = "/buildingCourse/viewComment?id="+sid+"&refer="+refer;
+}
+
+/**
+ * 显示弹层
+ * @param divid
+ * @returns
+ */
+function boxShowWay(divid,h) {
+	if(!divid) return;
+	var top = getPopTopJw(divid,true,h);
+	if(top != 0) {
+		WAY.box.show({'divid':divid,'top':top});
+	}else {
+		WAY.box.show({'divid':divid});
+	}
+}
+
+/**
+ * 计算弹框距离顶部高度，没有iframe不需要计算（苏萍萍，先这样计算，情况比较多可以后面再优化）
+ * @param divid
+ * @param flag
+ * @returns
+ */
+function getPopTopJw(divid,flag,h) {
+	h = h || 0;
+	if(window.parent.length > 0) {
+		try {
+			var height = $(document).height();
+			var scrollTop = $(window.parent.document).scrollTop();
+			
+			var top = 0;
+			if(flag) {
+				var divHei = h > 0 ? h : $("#"+divid).height();
+				
+				// 累加高度计算（弹层高度 >600直接使用滚动条位置，弹层高度 <200 滚动条高度+150，其他累加100）
+				var hei = divHei > 600 ? 0 : divHei < 200 ? 150 : 100;
+				top = scrollTop + hei;
+				
+				// 最大支持top值，总高度 - div高度 - 距离底部200
+				if(top + divHei >= height) {
+					top = height - divHei - 200;
+				}
+			}
+			return top > 0 ? top : 50;
+		}
+		catch(err){
+			return 350;
+		}
+	}else {
+		return 0;
+	}
+}

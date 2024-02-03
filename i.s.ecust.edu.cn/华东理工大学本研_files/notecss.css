@@ -1,0 +1,125 @@
+@charset "utf-8";
+*{margin:0px; padding:0px;}
+body{font-family:"微软雅黑", Arial, Helvetica, sans-serif; font-size:12px; line-height:1.5em; color:#555555;background:#fff;}
+ul{list-style-type:none;}
+input,select,textarea{vertical-align:middle; font-family:inherit; font-size:inherit; color:inherit; outline:none;}
+a{color:#555555; text-decoration:none; outline:none;}
+a{ blr:expression(this.onFocus=this.blur());} 
+
+a:hover,a.glink:hover,a.blink:hover{ text-decoration:none;outline:none;}
+.clearfix{zoom:1; overflow:hidden;}
+.clear{ clear:both; font-size:0; height:0; line-height:0;overflow:hidden}
+a img{ border:0;}
+.leftF{ float:left;}
+.rightF{ float:right;}
+
+
+.headdiv .roomicons{background:url("../images/roomicon.png") no-repeat; overflow:hidden;}
+.headdiv{ height:42px; background-color:#434343;}
+.headtop{ width:1300px; margin:0 auto; background-color:#434343;}
+.headtop .logo{ width:102px; margin-top:7px; float:left;}
+.headtop .mooclogo{ width:102px; height:28px; display:block; background:url("../images/mooclogo.png") no-repeat;}
+.headtop .message{ width:55px; height:28px; padding:13px 12px 0 0;position:relative; z-index:999; background:#434343;}
+.headtop .mespic{ display:block; overflow:hidden; width:30px; height:15px; background-position:0 0; margin-top:2px; float:left;}
+.headtop .mesnum{ display:block; overflow:hidden; width:18px; height:18px; line-height:18px; float:left; background-position:-1px -23px; color:#fff; font-size:12px; text-align:center;cursor: pointer;}
+.headtop .messagebox{ position:absolute; border:1px solid #d1d3d4; border-radius:3px; width:320px; border:1px solid #d1d3d4; background:#fff; right:10px; top:40px; display:none;}
+.headtop .messagebox ul{ margin:5px 0; font-size:12px;}
+.headtop .messagebox ul a{ font-size:12px;}
+.headtop .messagebox ul li{ height:30px; line-height:30px; padding:0 10px; border-bottom:1px solid #e9ebeb;}
+.headtop .messagebox ul li.last{ border:0 none; text-align:center;}
+.headtop .messagebox li em{ font-style: normal; margin:0 3px; color:#7b9e31;}
+.headtop .messagebox li span{ margin-right:5px;}
+.headtop .messagebox .sanjiao{display:block;background:url("../images/sanjiao.gif") no-repeat; width:12px; height:18px; line-height:18px; overflow:hidden; position:absolute; right:15px; top:-7px;}
+.headtop .pic{  margin:8px 5px 0 0;}
+.headtop .pic img{ border-radius:50%;}
+.headtop .inorout{ height:42px; line-height:42px; color:#828282;}
+.headtop .inorout span{ margin:0 15px;}
+.headtop .inorout a{ color:#fff; font-size:14px;}
+
+.headbanner{ background:url("../images/banner.jpg") center center no-repeat #1e3231; height:173px; overflow:hidden;}
+
+.main{ width:1300px; margin:0 auto;/*background:url("../images/mainbg.gif") 219px 0 repeat-y;*/ padding-bottom:100px;}
+.main .mainleft{ width:220px; position:relative; background:#f9f9f9;}
+.main .mainright{ width:890px; padding:35px 0px 0 29px;}
+
+
+a.moreHover{ display:inline-block; cursor:pointer; font-size:12px; color:#999999; line-height:22px; background:url(../images/roomicon.png) 0 -41px no-repeat; width:44px; height:22px; text-align:center; color:#FFF; position:absolute; right:0; top:38px;}
+a.moreHover:hover{ color:#F60;}
+
+.roomCur{ height:22px; line-height:22px; width:158px; margin:15px auto 0 auto; border:solid #839b1b 1px; border-radius:2px; background:#FFF;}
+.roomCur li{ width:78px; float:left; text-align:center; color:#839b1b;}
+.roomCur li.cotr{border-right:solid #839b1b 1px;}
+.roomCur li a{display:block;}
+.roomCur li a:hover{background:#839b1b; color:#FFF;}
+
+.more{ display:inline-block; cursor:pointer; font-size:12px; color:#999999; padding-right:12px; line-height:18px; margin-left:12px; background:url("../images/roomicon.png") right -45px no-repeat;}
+.more b{ display:inline-block;background:url("../images/roomicon.png") left -45px no-repeat; width:12px; height:18px; line-height:18px; overflow:hidden; float:left;}
+
+.mygroup{ margin-top:20px; padding-right:10px;}
+.mygroup .titile{ font-size:16px;}
+.mygroupul li{ margin:22px 0;}
+.mygroupul .xzimg{ width:48px; height:48px; float:left;}
+.mygroupul dl{ width:135px; float:left; margin-left:17px;}
+.mygroupul dl dt{ color:#333333; font-size:14px;}
+.mygroupul dl dd{ color:#999999; margin-top:8px;}
+
+.nodeicons{background:url("../images/nodeicons.gif") no-repeat; overflow:hidden; display:block; float:left;}
+
+.iframecurse h3{ font-size:24px; font-weight:normal; padding-bottom:15px;_padding-bottom:7px; border-bottom:2px solid #bbbbbb; height:30px; line-height:30px;}
+.iframecurse h3.blue{ color:#536074;}
+.iframecurse .addclass{width:16px; height:16px; background-position:-1px -23px; margin:8px 2px 0 0px;}
+.iframecurse .addnewcurse{ display:inline-block; float:right; color:#7b9131; font-size:14px; font-weight:normal; margin-top:4px;}
+.iframecurse .goback{width:30px; height:25px; background-position:-5px -3px; margin:5px 2px 0 0px;}
+
+.curselist ul{ width:875px; margin-bottom:20px;}
+.curselist ul li{ width:270px; height:209px; overflow:hidden; margin-right:21px; margin-top:20px; float:left; position:relative;}
+.curselist ul li img{ display:block;}
+.curselist ul li .cursename a{ color:#59657d; font-size:18px; line-height:30px; display:block;}
+.curselist ul li .info{ font-size:12px; color:#555555;}
+.curselist ul li .info a{ margin-right:10px;}
+.curselist ul li .place{width:31px; height:31px; background:url("../images/func.png") -36px -1px no-repeat; margin:2px 2px 0 0px; position:absolute; right:10px; top:10px; display:none;}
+.curselist ul li .delete{width:31px; height:31px; background:url("../images/func.png") 0px -1px no-repeat; margin:2px 2px 0 0px; position:absolute; right:10px; top:10px; display:none;}
+
+.classifybtn{ border-top:1px solid #ccc; padding:20px 0 0px 0; font-size:14px;}
+.classifybtn a{ font-size:14px; margin-right:14px;}
+
+.foot{ background:#999999; color:#ffffff; text-align:center; font-size:14px; line-height:24px;}
+.footinner{ border-top:1px solid #dddddd; color:#ffffff; padding:45px 0 80px 0; text-align:center; font-size:14px; line-height:24px;}
+.footinner .footintop{ color:#333333;}
+.footinner .footinbto{ color:#555555;}
+
+.nodeslist ul li{ height:82px; background:#fff; border:1px solid #e3e3e3; margin-top:20px; padding:20px; overflow:hidden;}
+.nodeslist ul li.hover{ border:1px solid #bbbbbb;}
+.nodeslist ul li .img{ width:135px; height:83px; overflow:hidden; float:left;}
+.nodeslist ul li dl{ padding-left:148px;}
+.nodeslist ul li dl dt{ margin-bottom:5px;}
+.nodeslist ul li dl dt,.nodeslist ul li dl dt a{ color:#59657d; font-size:16px;}
+.nodeslist ul li dl dt a:hover{ color:#7b9131;}
+.nodeslist ul li dl dd{ line-height:20px; color:#828282;}
+.viewmore .more{ display:block; width:87px; height:28px; margin:20px auto; background:url("../images/nodeicons.gif") 0px -30px no-repeat; text-indent:-9999px; overflow:hidden;}
+.nodesdetail ul li{ border-bottom:1px solid #e3e3e3; margin-top:20px; *margin-top:16px; padding-bottom:20px; overflow:hidden;}
+.nodesdetail ul li dl{ line-height:20px; word-break:break-all;}
+.nodesdetail ul li dl dt{ margin-bottom:10px;}
+.nodesdetail ul li dl dt,.nodesdetail ul li dl dt a{ color:#555555; font-size:14px; word-break:break-all;}
+.nodesdetail ul li dl .moredetail,.nodesdetail ul li dl .editbtn,.nodesdetail ul li dl .deletbtn{ display:inline-block; margin-right:10px; margin-top:10px; color:#999999; cursor:pointer;}
+.nodesdetail ul li dl .moredetail{ width:80px; float:left;}
+.nodesdetail ul li dl .moredetail,.nodesdetail ul li dl .moredetail a{ color:#7b9131;}
+.nodesdetail ul li dl div b{ display:inline-block; width:12px; height:15px; margin-right:1px; background:url("../images/nodeicons.gif") 0px -30px no-repeat; overflow:hidden;}
+.nodesdetail ul li dl div.editbtn,.nodesdetail ul li dl div.deletbtn{ width:40px; float:left;}
+.nodesdetail ul li dl div.editbtn b{background-position:-40px 4px;*background-position:-40px 0px;}
+.nodesdetail ul li dl div.deletbtn b{background-position:-60px 5px;*background-position:-60px 1px;}
+.nodesdetail ul li dl textarea{ height:60px; word-break:break-all; width:850px; resize:vertical;}
+.nodesdetail ul li dl dd.textarea a {font-size: 12px;color: #ff6d0c; margin-right:10px;}
+.nodesdetail .moreorless{ color:#7b9131; margin-left:10px; cursor:pointer; font-weight:normal;}
+.nodesdetail .btn1{ padding-right:16px; background:url("../images/mlicon.gif") right 3px no-repeat; }
+.nodesdetail .btn2{ background-position:right -13px; }
+
+.writenote {height:100px; width:848px; overflow-y:scroll; border:1px solid #999;word-break: break-all;word-wrap: break-word;font-size: 14px;}
+.detailintro .introarea div,.detailintro .introareashort div{ display:inline;}
+.detailintro .introarea br,.detailintro .introareashort br{ display:none;}
+
+.zadd_box { padding-top:15px;padding-right:41px;}
+.zadd_logo { float:right; width:154px; padding-top:8px;}
+.zadd_search { float:right; width:380px; height:32px; margin-top:9px; border:1px #d3d3d3 solid; border-radius:3px; background:#fff; font-size:14px;}
+.zadd_s_input { width:338px; height:32px; padding-left:3px; padding-right:2px; border:none; background:none; line-height:30px; vertical-align:middle;}
+.zadd_s_submit { display:inline-block; width:28px; height:24px; background:url(/images/z_magn.png) 8px 3px no-repeat; line-height:22px; color:#e1e1e1; vertical-align:middle;}

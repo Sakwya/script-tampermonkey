@@ -1,0 +1,114 @@
+
+.liticons{background:url("../images/littericon.gif") no-repeat; overflow:hidden; display:block; float:left;}
+
+
+/*.currentpage .wdkc_icon{ width:20px; height:20px; display:block; float:left; background-position:-159px 0; margin:10px 5px 0 10px;_margin:10px 5px 0 5px;}
+*/.currentpage a{color:#FFF;}
+.setpage{ display:block; background:#f3f3f3; border-bottom:1px solid #d5d5dc; border-top:1px solid #d5d5dc; border-right:1px solid #cccccc; line-height:38px; height:38px; margin:0px 0 15px 0; font-size:14px;}
+/*.setpage .wdkc_icon{ width:20px; height:20px; display:block; float:left; background-position:-158px -27px; margin:10px 5px 0 10px;_margin:10px 5px 0 5px;}
+*/
+.funclist .addfunc{ background: #f0f1f2; height: 36px; line-height: 36px; padding: 0 20px; text-align: right;}
+.funclist .greyadd{ display: inline-block; width: 14px; height: 14px; background: url(../images/manageapp.png) no-repeat; vertical-align: middle; margin-right: 5px;}
+.funclist .addfunc a{ color:#555555;}
+
+.funclistul {position: relative; margin-top: 20px;}
+.funclistul .jiaoyu_icon{ background-position:-429px 1px;}
+.funclistul li.current a .jiaoyu_icon,.funclistul li.current a.currentpage .jiaoyu_icon,
+.funclistul li a:hover .jiaoyu_icon,.funclistul li a.currentpage .jiaoyu_icon{ background-position:-429px -26px;}
+.funclistul li a em { float: left; width: 155px; padding: 5px 0; line-height: 30px; font-style: normal;}
+.funclistul li{ min-height: 41px; overflow: hidden;}
+.funclistul li span { display: inline-block; width: 3px; height: 23px; margin-top: 8px; float: left;}
+.funclistul li.current span { background: #09f;}
+.funclistul li a{ display: block; width: 200px; margin-left: 10px; float: left; min-height: 40px; font-size: 14px; color: #4c4c4c;}
+/* .funclistul li a:hover{ background:#7b9e31; color:#fff;} */
+/* .funclistul li.current a { color: #0099ff;} */
+.funclistul li a:hover { color: #0099ff;}
+.funclistul li a.currentpage {color: #0099ff;}
+.funclistul li a.currentpage em { color: #0099ff;}
+.funclistul li b{ vertical-align: middle; margin-left: 10px; margin-right: 10px; float: left; width: 22px; height: 20px; margin-top: 10px;}
+.funclistul .yp_icon{ background-position:-18px 2px;}
+.funclistul .sj_icon{ background-position:-40px 0;}
+.funclistul .bz_icon{ background-position:-63px 0;}
+.funclistul .yyd_icon{ background-position:-83px 0;}
+.funclistul .rcb_icon{ background-position:-106px 0;}
+.funclistul .xz_icon{ background-position:-131px 0;}
+.funclistul .wdkc_icon{ background-position:-158px -27px;}
+.funclistul .node_icon{ background-position:-185px -1px;}
+.funclistul .nes_icon{ background-position:-211px -1px;}
+.funclistul .coll_icon{ background-position:-237px -1px;}
+.funclistul .duxiu_icon{ background-position:-259px -1px;}
+.funclistul .diaocha_icon{ background-position:-281px -1px;}
+.funclistul .kecheng_icon{ background-position:-302px -1px;}
+.funclistul .jihua_icon{ background-position:-323px -1px;}
+.funclistul .banji_icon{ background-position:-344px -1px;}
+.funclistul .zhongdoc_icon{ background-position:-365px -1px;}
+.funclistul .weikecheng_icon{ background-position:-387px -1px;}
+.funclistul .scd_icon{ background-position:-408px -1px;}
+.funclistul .scd_icon{ background-position:-408px -1px;}
+.funclistul .jianao_icon{ background:url(../images/dzja_icon_1.png) no-repeat;}
+
+.funclistul .add_icon{ background:url(../images/notes.gif) no-repeat 0 -130px;}
+.funclistul li.current a .yp_icon,.funclistul li.current a.currentpage .yp_icon,
+.funclistul li a:hover .yp_icon,.funclistul li a.currentpage .yp_icon{ background-position:-18px -26px;}
+.funclistul li.current a .sj_icon,.funclistul li.current a.currentpage .sj_icon,
+.funclistul li a:hover .sj_icon,.funclistul li a.currentpage .sj_icon{ background-position:-40px -26px;}
+.funclistul li.current a .bz_icon,.funclistul li.current a.currentpage .bz_icon,
+.funclistul li a:hover .bz_icon,.funclistul li a.currentpage .bz_icon{ background-position:-63px -26px;}
+.funclistul li.current a .yyd_icon,.funclistul li.current a.currentpage .yyd_icon,
+.funclistul li a:hover .yyd_icon,.funclistul li a.currentpage .yyd_icon{ background-position:-83px -26px;}
+.funclistul li.current a .rcb_icon,.funclistul li.current a.currentpage .rcb_icon,
+.funclistul li a:hover .rcb_icon,.funclistul li a.currentpage .rcb_icon{ background-position:-106px -26px;}
+.funclistul li.current a .xz_icon,.funclistul li.current a.currentpage .xz_icon,
+.funclistul li a:hover .xz_icon,.funclistul li a.currentpage .xz_icon{ background-position:-131px -26px;}
+.funclistul li.current a .wdkc_icon,.funclistul li.current a.currentpage .wdkc_icon,
+.funclistul li a:hover .wdkc_icon,.funclistul li a.currentpage .wdkc_icon{ background-position:-157px 0px;}
+.funclistul li.current a .node_icon,.funclistul li.current a.currentpage .node_icon,
+.funclistul li a:hover .node_icon,.funclistul li a.currentpage .node_icon{ background-position:-185px -26px;}
+.funclistul li.current a .nes_icon,.funclistul li.current a.currentpage .nes_icon,
+.funclistul li a:hover .nes_icon,.funclistul li a.currentpage .nes_icon{ background-position:-211px -26px;}
+.funclistul li.current a .coll_icon,.funclistul li.current a.currentpage .coll_icon,
+.funclistul li a:hover .coll_icon,.funclistul li a.currentpage .coll_icon{ background-position:-237px -26px;}
+.funclistul li.current a .duxiu_icon,.funclistul li.current a.currentpage .duxiu_icon,
+.funclistul li a:hover .duxiu_icon,.funclistul li a.currentpage .duxiu_icon{ background-position:-259px -26px;}
+.funclistul li.current a .diaocha_icon,.funclistul li.current a.currentpage .diaocha_icon,
+.funclistul li a:hover .diaocha_icon,.funclistul li a.currentpage .diaocha_icon{ background-position:-281px -26px;}
+.funclistul li.current a .kecheng_icon,.funclistul li.current a.currentpage .kecheng_icon,
+.funclistul li a:hover .kecheng_icon,.funclistul li a.currentpage .kecheng_icon{ background-position:-302px -26px;}
+.funclistul li.current a .jihua_icon,.funclistul li.current a.currentpage .jihua_icon,
+.funclistul li a:hover .jihua_icon,.funclistul li a.currentpage .jihua_icon{ background-position:-323px -26px;}
+.funclistul li.current a .banji_icon,.funclistul li.current a.currentpage .banji_icon,
+.funclistul li a:hover .banji_icon,.funclistul li a.currentpage .banji_icon{ background-position:-344px -26px;}
+.funclistul li.current a .zhongdoc_icon,.funclistul li.current a.currentpage .zhongdoc_icon,
+.funclistul li a:hover .zhongdoc_icon,.funclistul li a.currentpage .zhongdoc_icon{ background-position:-365px -26px;}
+.funclistul li.current a .weikecheng_icon,.funclistul li.current a.currentpage .weikecheng_icon,
+.funclistul li a:hover .weikecheng_icon,.funclistul li a.currentpage .weikecheng_icon{ background-position:-387px -26px;}
+.funclistul li.current a .scd_icon,.funclistul li.current a.currentpage .scd_icon,
+.funclistul li a:hover .scd_icon,.funclistul li a.currentpage .scd_icon{ background-position:-408px -26px;}
+
+.funclistul li.current a .add_icon,.funclistul li.current a.currentpage .add_icon,
+.funclistul li a:hover .add_icon,.funclistul li a.currentpage .add_icon{ background:url(../images/notes.gif) no-repeat -23px -130px;}
+
+.funclistul li.current a .jianao_icon,.funclistul li.current a.currentpage .jianao_icon,
+.funclistul li a:hover .jianao_icon,.funclistul li a.currentpage .jianao_icon{ background:url(../images/dzja_icon_1.png) no-repeat -20px 0px;}
+
+/*72014.7.25图标*/
+.funclistul .zzwenk{ background:url(../images/icon/zzwenku2.png) no-repeat}
+.funclistul li.current a .zzwenk,.funclistul li.current a.currentpage .zzwenk,
+.funclistul li a:hover .zzwenk,.funclistul li a.currentpage .zzwenk{ background:url(../images/icon/zzwenku1.png) no-repeat}
+.funclistul .lunwenjc{background-position:-495px -1px;}
+.funclistul li.current a .lunwenjc,.funclistul li.current a.currentpage .lunwenjc,
+.funclistul li a:hover .lunwenjc,.funclistul li a.currentpage .lunwenjc{ background-position:-495px -26px;}
+.funclistul .xiaoxi{background:url(../images/icon/xiaoxi1.png) no-repeat}
+.funclistul li.current a .xiaoxi,.funclistul li.current a.currentpage .xiaoxi,
+.funclistul li a:hover .xiaoxi,.funclistul li a.currentpage .xiaoxi{ background:url(../images/icon/xiaoxi.png) no-repeat}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,698 @@
+// 课程来源(1=校内网课程; 0=外网课程; 2=华理新版课程) 华理新泛雅调整，后期开放
+var courseSource = [1,0,2];
+var coursehost = $("#coursehost").val();
+//学期
+var sectionId = $(".wzy_space").attr("sectionId") || 0;
+var semesterNum = $(".wzy_space").attr("semesterNum") || 0;
+
+//调用接口展示课程列表
+function course(source,issearch){
+	source = source || 0;
+	issearch = issearch || 0;
+	
+	// 学期
+	var x = $("#studyMenu .mic_select").eq(0).find("ul li.current").val() || 0;
+	
+	var url = '/microuserkc/courseList?source='+source+'&xq='+x;
+   
+	
+	$.ajax({
+		type:"get", 
+		url:"/microuserkc/courseList", 
+		data:{
+			"source":source,
+			"xq":x
+		},
+		async:false,
+		success:function(content) {
+			$('#studyMenu .jwkc .wzy_couros ul').append(content);
+			/**
+			 * 理课程分类展示
+			 */
+			var jjkc = zzxxkc = moockc = wzykc= "";
+			$('#studyMenu .wzy_couros li').each(function() {
+				var schoolid = $(this).attr("schoolid") || "";
+				var selfcourse = $(this).attr("selfcourse") || 0;
+				var wzycourse = $(this).attr("wzycourse") || 0;
+				
+				var isDel = 0;
+				var kchtml = $(this).prop("outerHTML");
+				if(schoolid == "34658") {
+					jjkc += kchtml;
+					isDel = 1;
+				}
+				else if(schoolid == "98870") {
+					moockc += kchtml;
+					isDel = 1;
+				}
+				
+				// 自主报名课程
+				if(selfcourse == 1) {
+					zzxxkc += kchtml;
+					isDel = 1;
+				}
+				// 微专业课程
+				if(wzycourse == 1) {
+					wzykc += kchtml;
+					isDel = 1;
+				}
+				
+				if(isDel == 1) {
+					$(this).remove();
+				}
+			});
+			
+			// 继教课程
+			if(jjkc != "") {
+				$('#studyMenu .jxjwkc .wzy_couros ul').append(jjkc);
+				//$('#studyMenu .jxjwkc').show();
+			}
+			
+			// 自主学习课程
+			if(zzxxkc != "") {
+				$('#studyMenu .zzxxkc .wzy_couros ul').append(zzxxkc);
+				$('#studyMenu .zzxxkc').show();
+			}
+			
+			// mooc课程
+			if(moockc != "") {
+				$('#studyMenu .moockc .wzy_couros ul').append(moockc);
+				$('#studyMenu .moockc').show();
+			}
+			// 微专业课程
+			if(wzykc != "") {
+				$('#studyMenu .wzykc .wzy_couros ul').append(wzykc);
+				$('#studyMenu .wzykc').show();
+			}
+				
+			
+			// 没有教务课程隐藏教务标签
+			/*if(issearch == 0) {
+				var leg =0;
+				$('#studyMenu .jwkc .wzy_couros li').each(function() {
+					if($(this).css("display") != "none") {
+						leg++;
+					}
+				})
+				if(leg > 0) {
+					$('#studyMenu .jwkc').show();
+				}else {
+					$('#studyMenu .jwkc').hide();
+				}
+			}*/
+			
+			// 加载课程成绩
+			getKccj();
+		}
+	});
+}
+
+/**
+ * 获取已开课程列表
+ */
+function getCourseList(source,belongSchoolId) {
+	source = source || 0;
+	belongSchoolId = belongSchoolId || 0; //所属单位
+	
+	// 显示加载提示
+	$("#course_loading").show();
+	
+	$.ajax({
+		type:"get", 
+		url:"/courselist/hlcoursegroupdata", 
+		cache:false,
+		async:false,
+		data:{
+			"source":source,
+			"belongSchoolId":belongSchoolId
+		},
+		success:function(content) {
+			$("#course_loading").hide();
+			$("#allCourseList").append(content);
+		}
+	})
+}
+
+/**
+ * 退课
+ * @param courseid
+ * @param classid
+ * @param source
+ * @returns
+ */
+function tuike(courseid,classid,source,pkbid,iswzy){
+	if(confirm('你确定要退课吗？')){
+		$.post("/courselist/retireCourse",{"courseid":courseid,"classId":classid,"source":source,"micid":pkbid,"iswzy":iswzy},function(data){
+			var res = jQuery.parseJSON(data);
+			//var res = eval("("+data+")");
+			//WAY.box.hide();
+			if(res.status){
+				alert("退课成功！");
+				loadStudyCourse();
+			}else{
+				alert("退课失败！");
+			}
+		});
+	}
+	
+}
+
+
+/**
+ * 去归档页面
+ */
+function toViewFiledCourses(teachorstudy) {
+	teachorstudy = teachorstudy || 0;
+	location.href = "/courselist/hlxqcoursefiled?userole=3&&teachorstudy="+teachorstudy;
+}
+
+
+/**
+ * 计算弹框距离顶部高度，没有iframe不需要计算
+ * @param divid
+ * @param flag
+ * @returns
+ */
+function getPopTop(divid,flag) {
+	if(window.parent.length > 0) {
+		try {
+			var height = $(document).height();
+			var scrollTop = $(window.parent.document).scrollTop();
+			
+			var hei = 0;
+			if(flag) {
+				var divHei = $("#"+divid).height();
+				hei = divHei > 600 ? 0 : divHei < 200 ? 150 : 100;
+			}
+			return scrollTop + hei;
+		}
+		catch(err){
+			return 350;
+		}
+	}else {
+		return 0;
+	}
+}
+
+/**
+ * 显示弹层
+ * @param divid
+ * @returns
+ */
+function boxShow(divid) {
+	if(!divid) return;
+	var top = getPopTop(divid);
+	if(top > 0) {
+		WAY.box.show({'divid':divid,'top':top});
+	}else {
+		WAY.box.show({'divid':divid});
+	}
+}
+
+/**
+ * 加载我学的课程
+ * @returns
+ */
+function loadStudyCourse(issearch) {
+	issearch = issearch || 0;
+	$('#studyMenu .wzy_couros ul').html("");
+	
+	for(var i=0;i<courseSource.length; i++) {
+		var source = courseSource[i];
+		course(source,issearch);
+	}
+}
+
+/**
+ * 加载我教的课程
+ * @returns
+ */
+function loadTeachingCourse(schoolid) {
+	schoolid = schoolid  || 0;
+	// 初始化页面
+	$("#allCourseList,#hl_qtxqkc dt,#hl_jskc dt").html("");
+	$("#hl_qtxqkc,#hl_jskc").hide();
+	
+	for(var i=0;i<courseSource.length; i++) {
+		var source = courseSource[i];
+		getCourseList(source,schoolid);
+	}
+	
+	// 其他学期课程
+	var leg1 = $("#courselist1 dl[semesterNum!="+semesterNum+"]").length;
+	var leg2 = $("#courselist0 dl[semesterNum!="+semesterNum+"]").length;
+	if(semesterNum > 0 && leg1 > 0 || leg2 > 0) {
+		var othertermHtml = "";
+		$("#courselist1 dl,#courselist0 dl").each(function() {
+			var snum = $(this).attr("semesterNum") || 0;
+			if(snum != semesterNum) {
+				othertermHtml += $(this).prop("outerHTML");
+				$(this).hide();
+			}
+		})
+		$("#hl_qtxqkc dt").html(othertermHtml);
+		$("#hl_qtxqkc").show();
+	}
+	
+	// 加载完成，整理课程展示数据
+	var applyList = $("#applylist0,#applylist1").prop("outerHTML") || "";
+	var jwList = $("#jwlist0,#jwlist1").prop("outerHTML")  || "";
+	
+	// 移除激活列表中的自建展示
+	$("#allCourseList #applylist0,#allCourseList #applylist1").remove();
+	$("#allCourseList #jwlist0,#allCourseList #jwlist1").remove(); //不支持激活
+	
+	// 单独展示自建
+	$("#hl_jskc .w_main").html(applyList);
+	if($("#hl_jskc dl").length > 0) {
+		$("#hl_jskc").show();
+	}
+}
+
+/**
+ * 加载课程成绩等信息
+ * @returns
+ */
+function getKccj() {
+	// 加载课程成绩
+	$(".wzy_couros ul li").each(function() {
+		var $li = $(this);
+		var cid = $li.attr("cid");
+		var clazzId = $li.attr("clazzid") || 0;
+		var source = $li.attr("source");
+		var createrId = $li.attr("createrId");
+		var wzycourse = $li.attr("wzycourse") || 0;
+		$.ajax({
+			type:"get", 
+			url:"/microuserkc/getJwKc",
+			data:{
+				"source":source,
+				"createrId":createrId,
+				"wzycourse":wzycourse,
+				"clazzId":clazzId,
+				"cid":cid
+			},
+			dataType:"json",
+			success:function(result) {
+				if(result.status) {
+					//课程院系
+					var groupname = result.groupname || "";
+					if(groupname != "") {
+						$li.find(".wzy_couros_xueyuan span").eq(0).html(groupname);
+					}else {
+						$li.find(".wzy_couros_xueyuan span").eq(0).hide();
+					}
+					if(wzycourse==0){
+						//课程成绩
+						var mkcj = result.mkcj || "";
+						var jwcj = result.jwcj || "";
+						if(mkcj != "" || jwcj != "") {
+							var cjHtml = '<span class="wcourgr">成绩<i class="wcourgrhov" style="height: 30px;">';
+							if(mkcj != "") {
+								cjHtml += '<span>线上成绩：'+mkcj+'</span>';
+							}
+							if(jwcj != "") {
+								cjHtml += '<span>线下成绩：'+jwcj+'</span>';
+							}
+							cjHtml += '</span>';
+							
+							$li.find(".wkccj").html(cjHtml);
+						}
+					}
+	        		
+					// 课程简介
+		        	var description = result.description || "";
+		        	if(description != "") {
+		        		description = description.replace(/<\/?.+?>/g, "");
+		        		$li.find(".wzy_couros_text").html(description).attr("title",description);
+		        	}
+				}
+			}
+		})
+	});
+}
+
+/**
+ * 弹框提示
+ * @param content 弹框提示内容
+ * @param time 弹框关闭时间 ，默认2秒
+ * @returns
+ */
+function showTip(content,time,reload) {
+	content = content || "创建成功！";
+	time = time || 2000;
+	reload = reload || false
+	
+	$("#tipContent span").html(content);
+	var top = getPopTop("tipContent",false);
+	$("#tipContent").css("margin-top",top+"px").show();
+	
+	setTimeout(function() { 
+		$("#tipContent").hide();
+		// 刷新当前页面
+		if(reload) {
+			location.href = location.href;
+		}
+	}, time);
+}
+
+/**
+ * 弹框提示
+ * @param content 弹框提示内容
+ * @returns
+ */
+function showTip2(content,flag,divid) {
+	content = content || "创建成功！";
+	flag = flag || false;
+	divid = divid || "tipContent";
+	$("#tipContent span").html(content);
+	var time = time || 2000;
+	
+	var top = getPopTop(divid,flag);
+	$("#tipContent").css("margin-top",top+"px").show();
+	setTimeout(function() { 
+		$("#tipContent").hide();
+	}, time);
+}
+
+
+$(function() {
+	//查看往期课程
+	$(".w_pop_list").delegate(".w_lookcour","click",function() {
+		var $p = $(this).parents(".w_pop_row");
+		
+		var courseident = $p.attr("courseidentifier") || "";
+		var cid = $p.attr("cid") || "";
+		var bulidid = $p.attr("bulidid") || 0;
+		var jwid = $p.attr("jwid") || 0;
+		var schoolid = $p.attr("schoolid") || 0;
+		var source = $p.attr("source") || 0;
+		
+		if(courseident != "") {
+			$.ajax({
+				type:"get", 
+				url:"/courselist/getPastCourse", 
+				data:{
+					"source":source,
+					"belongSchoolId":schoolid,
+					"courseidentifier":courseident,
+					"moocId":cid,
+					"bulidid":bulidid,
+					"jwid":jwid
+				},
+				success:function(content) {
+					$("#pastCourse .w_pastcourlist").html(content);
+					$("#pastCourse h3 i em").html(courseident);
+					// 显示往期课程弹层
+					boxShow("pastCourse");
+				}
+			})
+			
+		}
+	});
+
+	// 关闭往期课程弹层
+	$("#pastCourse .w_pop_head span").on("click",function() {
+		WAY.box.hide();
+	});
+
+
+	/**
+	 * 课程点击
+	 * @param e
+	 * @returns
+	 */
+	$(".wzy_couros").on("click", "li", function (e) {
+		//点击对象
+		var target = e.target;
+		var $t = $(target);
+		
+		//退课按钮点击
+		if(target.tagName == "P" && $t.hasClass("wzy_couros_layout")) {
+			return;
+		}
+		if(target.tagName == "DIV" && $t.hasClass("study_wzy_name")) {
+			var wzyid = target.tagName == "DIV" ? $t.attr("wzyid"):0;
+			var refer = location.href;
+			location.href = "/micro/protal/detail?type=1&id="+wzyid+"&refer="+encodeURIComponent(refer);
+			return;
+		}
+		
+		// 微专业课程点击
+		if((target.tagName == "DL" && $t.hasClass("wzy_select_row")) || $t.parents(".wzy_select_row").length > 0) {
+			var dm = target.tagName == "DL" ? $t.attr("dm") : $t.parents(".wzy_select_row").attr("dm");
+			location.href = "/microuserkc/wzyDetail?wzydm="+dm;
+		}
+		
+		// 录播视频点击
+		if((target.tagName == "SPAN" && $t.hasClass("lbspspan"))) {
+			var url = $t.attr("hrefurl") || "";
+			var $li = $(this);
+			var cid = $li.attr("cid");
+			if(url != "") {
+				// 课程跳转
+				var subForm = $("#courseForm").length;
+				if(subForm > 0) {
+					var form = $("#courseForm");
+					form.html('<input name="courseId" value="'+cid+'">');
+					form.attr('action', url);
+					form.submit();
+				}else {
+					var form = $("<form id='courseForm'></form>");
+					form.attr('action', url);
+					form.html('<input name="courseId" value="'+cid+'">')
+					form.attr('method','get')
+			        form.attr("target","_blank");
+			        form.appendTo("body")
+			        form.css('display','none')
+			        form.submit();
+				}
+			}
+		}
+		// LI 点击
+		else {
+			var $li = $(this);
+			var cid = $li.attr("cid");
+			var source = $li.attr("source");
+			var clazzId = $li.attr("clazzId");
+			var cfid = $li.attr("schoolid");
+			var tstatus = $li.attr("tstatus") || 0;
+			var app = $li.attr("app") || 0;
+			var ckenc = $li.attr("ckenc") || "";
+			
+			if(tstatus == 1) {
+				var begindate = $li.attr("begindate");
+				var enddate = $li.attr("enddate");
+				showTip2("课程开放时间："+begindate+" -- "+enddate,true);
+				return;
+			}
+			
+			var uid = $(".wzy_space").attr("uid") || "";
+			var uname = $(".wzy_space").attr("uname") || "";
+			var cfid = $(".wzy_space").attr("fid") || "";
+			
+			// 课程跳转
+			var subForm = $("#courseForm").length;
+			if(subForm > 0) {
+				var form = $("#courseForm");
+				if(app==3){
+					form.attr('action', "/portal/courseweb/jinru");
+					form.html('<input name="courseid" value="'+cid+'"><input name="coursesource" value="'+app+'">')
+
+				}else{
+					if(source == 2){
+						form.attr('action', "/courselist/opencoursenewfy");
+					}else{
+						form.attr('action', source == 0 ? coursehost+"/dz/openhlcourse" : "/courselist/opencourse");
+					}
+					form.html('<input name="role" value="3"><input name="uid" value="'+uid+'"><input name="uname" value="'+uname+'"><input name="cfid" value="'+cfid+'"><input name="courseId" value="'+cid+'"><input name="clazzId" value="'+clazzId+'"><input name="source" value="'+source+'"><input name="ckenc" value="'+ckenc+'">')
+					
+				}
+				form.submit();
+			}else {
+				var form = $("<form id='courseForm'></form>");
+				if(app==3){
+					form.attr('action', "/portal/courseweb/jinru");
+					form.html('<input name="courseid" value="'+cid+'"><input name="coursesource" value="'+app+'">')
+
+					
+				}else{
+					if(source == 2){
+						form.attr('action', "/courselist/opencoursenewfy");
+					}else{
+						form.attr('action', source == 0 ? coursehost+"/dz/openhlcourse" : "/courselist/opencourse");
+			        }
+					form.append('<input name="cfid" value="'+cfid+'"><input name="uid" value="'+uid+'"><input name="uname" value="'+uname+'"><input name="role" value="3"><input name="courseId" value="'+cid+'"><input name="clazzId" value="'+clazzId+'"><input name="source" value="'+source+'"><input name="ckenc" value="'+ckenc+'">')
+				}
+				form.attr('method','get')
+		        form.attr("target","_blank");
+		        form.appendTo("body")
+		        form.css('display','none')
+		        form.submit();
+			}
+		}
+			
+	})
+
+
+	/**
+	 * 申请开课
+	 */
+	$("#allCourseList,#pastCourse").delegate(".w_copyying .w_btnsm","click",function() {
+		var $p = $(this).parents(".zmy_item");
+		
+		var cid = $p.attr("cid");
+		var schoolid = $p.attr("schoolid");
+		var source = $p.attr("source");
+		// 开课审核提交状态（华理初次审核可以选择审核教师）
+		var isSubmitStudy = $(this).parent().attr("isSubmitStudy") || 1;
+		
+		// 华理单独定制开课【submitStudyCourseHl】，其余为通用开课审核
+		var buildcourse_div = isSubmitStudy == 0 ? "submitStudyCourseHl" : "submitStudyCourse";
+		// 华理定制开课查询审核教师
+		if(buildcourse_div == "submitStudyCourseHl" && $("#submitStudyCourseHl .zse_ul dd:not(.zse_first)").length == 0) {
+			$.ajax({
+				type:"get", 
+				url:"/courselist/getHlXzr", 
+				dataType:"json",
+				success:function(result) {
+					if(result.data) {
+						var ddHtml = "";
+						$.each(result.data,function(index,item) {
+							var zgh = item.zgh;
+							var xm = item.xm;
+							var cxid = item.cxid;
+							
+							ddHtml += '<dd class="zse_li" zgh="'+zgh+'" uid="'+cxid+'" xm="'+xm+'"><a href="javascript:void(0);">'+xm+'<span>'+zgh+'</span></a></dd>';
+						})
+						
+						// 填充系主任
+						$("#submitStudyCourseHl .zse_ul dd:not(.zse_first)").remove();
+						$("#submitStudyCourseHl .zse_ul").append(ddHtml);
+					}
+				}
+			})
+		}
+		
+		$("#"+buildcourse_div).attr("cid",cid).attr("schoolid",schoolid).attr("source",source);
+		// 从往期课程里点击，先隐藏弹层
+		if($(this).parents("#pastCourse").length > 0) {
+			WAY.box.hide();
+		}
+		boxShow(buildcourse_div);
+	});
+
+	/**
+	 * 申请开课 确认
+	 */
+	$("#submitStudyCourse .wbtn .confirmBtn").on("click",function() {
+		var cid = $("#submitStudyCourse").attr("cid") || 0;
+		var fid = $("#submitStudyCourse").attr("schoolid") || 0;
+		
+		if(cid <= 0) {
+			showTip("请选择要申请开课的课程");
+			return;
+		}
+		$.ajax({
+			type:"post", 
+			url:"/buildingCourse/setSubmitStudy", 
+			async:false,
+			data:{
+				"fid":fid,
+				"cid":cid,
+				"isHldz":1
+			},
+			dataType:"json",
+			success:function(data) {
+				if(data.status) {
+					loadTeachingCourse();
+					showTip("提交开课申请成功。",2000);
+					WAY.box.hide();
+				}else {
+					var msg = data.mag || "申请出错，请稍候重试";
+					showTip(msg);
+				}
+			}
+		})
+	});
+
+	/**
+	 * 华理定制-申请开课 确认
+	 */
+	$("#submitStudyCourseHl .zlayer-button .confirm").on("click",function() {
+		var cid = $("#submitStudyCourseHl").attr("cid") || 0;
+		var fid = $("#submitStudyCourseHl").attr("schoolid") || 0;
+		
+		if(cid <= 0) {
+			showTip("请选择要申请开课的课程");
+			return;
+		}
+		
+		// 指定开课申请的教师
+		var $zsep = $("#submitStudyCourseHl .zselect .zse_p");
+		var appruid = $zsep.attr("uid") || 0;
+		var apprname = $zsep.attr("xm") || "";
+		var apprloginname = $zsep.attr("uname") || "";
+		
+		$.ajax({
+			type:"post", 
+			url:"/buildingCourse/setSubmitStudy", 
+			async:false,
+			data:{
+				"fid":fid,
+				"cid":cid,
+				"appruid":appruid,
+				"apprloginname":apprloginname,
+				"apprname":apprname,
+				"isHldz":1
+			},
+			dataType:"json",
+			success:function(data) {
+				if(data.status) {
+					loadTeachingCourse();
+					showTip("提交开课申请成功。",2000);
+					WAY.box.hide();
+				}else {
+					var msg = data.mag || "申请出错，请稍候重试";
+					showTip(msg);
+				}
+			}
+		})
+	});
+
+	/**
+	 * 申请开课 取消|关闭
+	 */
+	$("#submitStudyCourse .wbtn .bnt_bluebor,#submitStudyCourse .w_pop_head span").on("click",function() {
+		WAY.box.hide();
+	});
+
+	/**
+	 * 华理定制-申请开课 取消|关闭
+	 */
+	$("#submitStudyCourseHl .cancel,#submitStudyCourseHl .zlayer-close").on("click",function() {
+		WAY.box.hide();
+	});
+
+	/**
+	 * 查看审核意见
+	 */
+	$("#allCourseList,#pastCourse").delegate(".w_copyying .colblue","click",function() {
+		var approvalViews = $(this).next("span").html() || "未填写审核意见";
+		$("#studyApprovalView .w_delhit_scroll").html(approvalViews);
+		
+		// 从往期课程里点击，先隐藏弹层
+		if($(this).parents("#pastCourse").length > 0) {
+			WAY.box.hide();
+		}
+		boxShow("studyApprovalView");
+	});
+
+	/**
+	 * 审核意见 确认|关闭
+	 */
+	$("#studyApprovalView .wbtn .confirmBtn,#studyApprovalView .w_pop_head span").on("click",function() {
+		WAY.box.hide();
+	});
+	
+})

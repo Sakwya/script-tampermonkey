@@ -1,0 +1,50 @@
+@charset "utf-8";
+/* CSS Document */
+.leftSide{width:220px;background:#f9f9f9}
+.personalInfor{height:165px;background:url(../images/personalBg.jpg) no-repeat #faf7f5 bottom center;padding-top:15px;text-align:center}
+.headPortrait{display:block;width:80px;height:80px;border-radius:100%;overflow:hidden;margin:0 auto;}
+.personalName{font-size:18px;height:44px;line-height:44px}
+.manageBtn{display:inline-block;width:74px;height:26px;border-radius:20px;background:#faa046;line-height:26px;color:#fff;font-size:14px}
+.manageBtn:hover{background:#faac5f;color:#fff;}
+.funclistul{margin-top:20px}
+.funclistul li{min-height:41px;overflow:hidden}
+.funclistul li span{display:inline-block;width:3px;height:23px;margin-top:8px;float:left}
+.funclistul li a{display:block;width:200px;margin-left:10px;float:left;min-height:40px;font-size:14px;color:#4c4c4c}
+.funclistul li a em{float:left;width:155px;padding:5px 0;line-height:30px}
+.funclistul li a:hover{color:#0099ff;}
+.funclistul li a.noBord{border:0}
+.funclistul li b{ vertical-align:middle;margin-left:10px;margin-right:10px;float:left;width:22px; height:20px;margin-top:10px;}
+.leftMenu li a i.index{height:18px;background-position:-1px 0;margin-top:10px}
+.leftMenu li a i.kc{height:18px;background-position:-1px -42px;margin-top:10px}
+.leftMenu li a i.txl{height:16px;background-position:-1px -84px;margin-top:12px}
+.leftMenu li a i.tz{height:19px;background-position:-1px -126px;margin-top:9px}
+.leftMenu li a i.xx{height:19px;background-position:-1px -170px;margin-top:9px}
+.leftMenu li a i.dt{height:19px;background-position:-1px -212px;margin-top:9px}
+.leftMenu li a i.sf{height:19px;background-position:-1px -299px;margin-top:12px}
+.leftMenu li a i.bj{height:19px;background-position:-1px -341px;margin-top:12px}
+.leftMenu li a i.zt{height:19px;background-position:-1px -385px;margin-top:12px}
+.leftMenu li a i.yp{height:19px;background-position:-1px -429px;margin-top:12px}
+
+.funclistul li.current span{background:#0099ff}
+.funclistul li.current a{color:#0099ff}
+.leftMenu li.current a i.index{background-position:-32px 0}
+.leftMenu li.current a i.kc{background-position:-32px -42px}
+.leftMenu li.current a i.txl{background-position:-32px -84px}
+.leftMenu li.current a i.tz{background-position:-32px -126px}
+.leftMenu li.current a i.xx{background-position:-32px -170px}
+.leftMenu li.current a i.dt{background-position:-32px -212px}
+.leftMenu li.current a i.sf{background-position:-32px -299px}
+.leftMenu li.current a i.bj{background-position:-32px -341px}
+.leftMenu li.current a i.zt{background-position:-32px -385px}
+.leftMenu li.current a i.yp{background-position:-32px -429px}
+
+.manageApp{background:#f0f1f2;height:36px;line-height:36px;padding:0 20px;text-align:right}
+.manageApp i{display:inline-block;width:14px;height:14px;background:url(../images/manageapp.png) no-repeat;vertical-align:middle;margin-right:5px}
+
+.ewm{width:126px;text-align:center;padding-top:28px;margin:0 auto;padding-bottom:25px}
+.ewm p{padding-top:18px}
+
+.rightSide{width:956px;}
+
+/*底部*/
+.footer{height:52px;background:#b4b6b8;text-align:center;color:#fff;font-size:14px;margin-top:25px;line-height:52px}

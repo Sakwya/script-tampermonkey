@@ -1,0 +1,55 @@
+(function($, window, document, undefined) {
+
+    /**
+     * 点击下拉显示
+     */
+    $(document).on("click", ".IndexselectBox", function() {
+        var ul = $(this).find("ul"),
+            display = ul.css("display");
+
+        display = display == "block" ? 0 : 1;
+
+        $(".IndexselectBox ul").css("display", "none");
+
+        if (display) {
+            ul.css("display", "block");
+            display = 0;
+            ul.find("li").each(function() {
+                display += $(this).height();
+            });
+            ul.css("display", "none");
+
+            if (display > 200) {
+                ul.css("height",200);
+                ul.css("overflow", "auto");
+            }
+
+            ul.slideDown(100);
+        } else {
+            ul.slideUp();
+        }
+
+        return false;
+    });
+
+    /**
+     * 点击列表 文字和 value 上去
+     */
+    $(document).on("click", ".IndexselectBox ul li", function() {
+    	var b=$(this).attr("id");
+    	var a = $(this).attr("name");
+    	var p = $(this).parent().parent().find("p");
+    	var userId = $("#userId").val();
+    	var convertUrl = $("#convertUrl").val();
+    	var referurl = "spaceConvert?uname="+a+"&fid="+b+"&uid="+userId+"&refer=http://"+convertUrl;
+        p.text($(this).find("a").text());
+        p.attr("value", $(this).attr("value"));
+        $(this).addClass("curr").siblings().removeClass("curr")
+        $("#searchTypeInp").val($(this).attr("value"));
+        window.location.href= referurl;
+    });
+
+    $(document).on("click", function() {
+        $(".IndexselectBox ul").slideUp();
+    });
+})(jQuery, window, document);

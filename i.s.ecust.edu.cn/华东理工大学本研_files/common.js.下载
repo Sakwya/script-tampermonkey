@@ -1,0 +1,7 @@
+var s = $('.wcourgr').length;
+for(var i = 0; i < s ; i++){
+	var leg = $('.wcourgr').eq(i).find('span').length;
+	if(leg == 2){
+		$('.wcourgr').eq(i).find(".wcourgrhov").height("60px");
+	}
+}

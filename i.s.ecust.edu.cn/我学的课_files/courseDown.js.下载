@@ -1,0 +1,86 @@
+//第一层弹框
+function exportData(moocid){
+	$("#dbrwcztk1").show();
+	$("#dbrwbjtk1").show();
+	$("#dbmoocid").val(moocid);
+}
+//取消
+function cancal(){
+	$("#dbrwcztk1").hide();
+	$("#dbrwbjtk1").hide();
+	$("#dbmoocid").val('');
+	$("#dbrwcztk2").hide();
+	$("#dbrwbjtk2").hide();
+}
+//第二层弹框
+function dyztjk(moocid,st){
+	$('#cxdban').unbind();
+	$("#dbrwcztk1").hide();
+	$("#dbrwbjtk1").hide();
+	if(st != 2){
+		$("#dbmoocid").val(moocid);
+	}
+	$('tbody[name="dbrwxzbg"]').html('');
+	$.ajaxSettings.async = false;
+	if(st == 2){
+		moocid = $("#dbmoocid").val();
+		$.get("/api/couserdata/TbZtspace?moccid="+moocid);
+	}
+	var s = '';
+	var flag = true;
+	$.get("/api/couserdata/downStatusHistory?moccid="+moocid,function(data1){
+		var obj1 = jQuery.parseJSON(data1);
+		if(obj1.status == 0){
+			s += '';
+			flag = true;
+		}else if(obj1.status == 1){
+			flag = false;
+			s += '<tr class="ztable-tr"><td width="200">'+obj1.courseName+'</td><td width="200">排队中</td><td width="200"><a class="w_tdbtn wpinkbg" style="cursor:pointer">--</a></td><tr>';
+		}else if(obj1.status == 2){
+			flag = false;
+			s += '<tr class="ztable-tr"><td width="200">'+obj1.courseName+'</td><td width="200">执行中</td><td width="200"><a class="w_tdbtn wpinkbg" style="cursor:pointer">--</a></td><tr>';
+		}else if(obj1.status == 3){
+			flag = true;
+			s += '<tr class="ztable-tr"><td width="200">'+obj1.courseName+'</td><td width="200">已完成</td><td width="200"><a class="w_tdbtn wbluebg" href="'+obj1.url+'" style="cursor:pointer">下载</a></td><tr>';
+		}
+		
+	});
+	$.get("/api/couserdata/downStatus?moccid="+moocid,function(data){
+		var obj = jQuery.parseJSON(data);
+		if(obj.status == 0){
+			flag = true;
+		}else if(obj.status == 1){
+			flag = false;
+			s += '<tr class="ztable-tr"><td width="200">'+obj.courseName+'</td><td width="200">排队中</td><td width="200"></td><tr>';
+		}else if(obj.status == 2){
+			flag = false;
+			s += '<tr class="ztable-tr"><td width="200">'+obj.courseName+'</td><td width="200">执行中</td><td width="200"></td><tr>';
+		}else if(obj.status == 3){
+			s += '<tr class="ztable-tr"><td width="200">'+obj.courseName+'</td><td width="200">已完成</td><td width="200"><a class="w_tdbtn wbluebg" href="'+obj.url+'" style="cursor:pointer">下载</a></td><tr>';
+			flag = true;
+		}
+	});
+	if(flag){
+		$('#cxdban').bind('click',function(){cxdban();});
+		$('#cxdban').css('background-color','#30B6F1');
+	}else{
+		$('#cxdban').unbind();
+		$('#cxdban').css('background-color','#CCCCCC');
+		$('#cxdban').css('border','#CCCCCC');
+	}
+	if(s != ''){
+		$("#dbrwcztk2").show();
+		$("#dbrwbjtk2").show();
+		$('tbody[name="dbrwxzbg"]').html(s);
+	}else{
+		cxdban();
+		exportData(moocid);
+	}
+	$.ajaxSettings.async = true;
+}
+
+function cxdban(){
+	var moocid = $("#dbmoocid").val();
+	cancal();
+	exportData(moocid);
+}

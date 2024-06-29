@@ -4,6 +4,7 @@
 // @version      2024-06-27
 // @description  可以查看选中的文件占用的空间
 // @author       sakwya
+// @license      MIT
 // @match        https://mypikpak.com/s/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=mypikpak.com
 // @grant        none

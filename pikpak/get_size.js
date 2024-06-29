@@ -12,7 +12,8 @@
 
 (function () {
   'use strict';
-  const DEBUG = true;
+  // 如果出现问题可以将DEBUG改为true,在控制台查看错误信息
+  const DEBUG = false;
   const debug = (ele, message = "") => {
     if (DEBUG) {
       console.log(ele);

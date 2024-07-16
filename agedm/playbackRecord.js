@@ -27,6 +27,7 @@
       // 下面这行代码会在网页播放器加载spjx_settings之前执行，所以不执行也可以。
       video.currentTime = recordTime;
       if (lastRecordTime != "0") localStorage.setItem(lastSrc, lastRecordTime);
+      else localStorage.removeItem(lastSrc);
     }
     else {
       console.warn("spjx_settings not found or invalid!");
@@ -37,6 +38,7 @@
   const now = Date.now();
   // recordedSrc[lastSrc] = now + 14 * 24 * 60 * 60 * 1000;
   if (lastRecordTime != "0") recordedSrc[lastSrc] = now + 1209600000;
+  else delete recordedSrc[lastSrc]
   for (let key in recordedSrc) {
     if (recordedSrc[key] > now) continue;
     localStorage.removeItem(key);

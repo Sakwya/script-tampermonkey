@@ -38,7 +38,7 @@
   // recordedSrc[lastSrc] = now + 14 * 24 * 60 * 60 * 1000;
   if (lastRecordTime != "0") recordedSrc[lastSrc] = now + 1209600000;
   for (let key in recordedSrc) {
-    if (recordedSrc[key] < now) continue;
+    if (recordedSrc[key] > now) continue;
     localStorage.removeItem(key);
     delete recordedSrc[key];
   }

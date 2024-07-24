@@ -12,8 +12,8 @@
 // ==/UserScript==
 
 'use strict';
+const now = Date.now();
 (function () {
-  'use strict';
   switch (window.location.href.split('/')[3]) {
     case 'play':
       func_top();
@@ -46,14 +46,20 @@ function func_top() {
   iframe.src = iframe.src + "#title=" + title + "#episode=" + episode;
   parent.appendChild(iframe);
 }
+
 function func_vip() {
   const id = PlayConfig.Id;
   if (!id) {
     console.alert("Failed to get PlayConfig.Id")
     return
   }
-  const href = decodeURIComponent(window.location.href);
-  const pack = href.match(/#title=([^#]*)#episode=([^#]*)/);
+
+  const last_id = localStorage.getItem("last_id_vip");
+  localStorage.setItem("last_id_vip", id)
+
+  const data_records = JSON.parse(localStorage.getItem("data_records_vip")) || {}
+
+  const pack = decodeURIComponent(window.location.href).match(/#title=([^#]*)#episode=([^#]*)/);
   const title = pack[1];
   const episode = pack[2];
   // const video = document.querySelector("#artplayer > div > video")
@@ -63,27 +69,24 @@ function func_vip() {
    * 所以记录历史交给artplayer
    * 这里只实现进度的过期删除
   */
-  const recorded = JSON.parse(localStorage.getItem("vip_recorded")) || {}
-  const now = Date.now();
   // "expirationDate": now + 14 * 24 * 60 * 60 * 1000;
-  recorded[id] = {
+  data_records[id] = {
     "title": title,
     "episode": episode,
-    "expirationDate": now + 1209600000
+    "expirationDate": now + 1209600000,
   };
-  const lastID = localStorage.getItem("lastID_vip");
-  localStorage.setItem("lastID_vip", id);
-  if (parseInt(localStorage.getItem(lastID)) || 0 < 10) {
-    localStorage.removeItem(lastID);
-    delete recorded[lastID];
+  // 获取播放时间：
+  const artplayer_settings = JSON.parse(localStorage.getItem("artplayer_settings"));
+  if (!!last_id &&!!artplayer_settings.times && (artplayer_settings.times[last_id] || 0) < 10) {
+    localStorage.removeItem(last_id);
+    delete data_records[last_id];
   }
-
-  Object.keys(recorded).forEach(key => {
-    if (recorded[key].expirationDate > now) return
+  for (let key in data_records) {
+    if (data_records[key].expirationDate > now) continue;
     localStorage.removeItem(key);
-    delete recorded[key];
-  })
-  localStorage.setItem("vip_recorded", JSON.stringify(recorded));
+    delete data_records[key];
+  }
+  localStorage.setItem("data_records_vip", JSON.stringify(data_records));
 }
 
 function func_m3u8() {
@@ -92,45 +95,50 @@ function func_m3u8() {
     console.alert("Failed to get Vurl_id")
     return
   }
-  const href = decodeURIComponent(window.location.href);
-  const pack = href.match(/#title=([^#]*)#episode=([^#]*)/);
+
+  const pack = decodeURIComponent(window.location.href).match(/#title=([^#]*)#episode=([^#]*)/);
   const title = pack[1];
   const episode = pack[2];
-  const video = document.querySelector("#loading > div > video");
 
-  const lastID = localStorage.getItem("lastID_m3u8");
-  var lastRecordTime;
-  if (lastID != id) {
-    localStorage.setItem("lastID_m3u8", id);
-    const spjx_settings = localStorage.getItem("spjx_settings");
-    if (spjx_settings) {
-      lastRecordTime = spjx_settings.match(/"1":(\d+)/)[1];
-      const recordTime = parseInt(localStorage.getItem(id)) || 0
-      const new_spjx_settings = spjx_settings.replace(/"1":\d+/, '"1":' + recordTime);
-      localStorage.setItem("spjx_settings", new_spjx_settings);
-      // 下面这行代码会在网页播放器加载spjx_settings之前执行，所以不执行也可以。
-      video.currentTime = recordTime;
-      if (lastRecordTime != "0") localStorage.setItem(lastID, lastRecordTime);
-      else localStorage.removeItem(lastID);
+  // const video = document.querySelector("#loading > div > video");
+
+  const last_id = localStorage.getItem("last_id_m3u8");
+  if (last_id != id) {
+    localStorage.setItem("last_id_m3u8", id);
+    var spjx_settings;
+    try {
+      spjx_settings = JSON.parse(localStorage.getItem("spjx_settings")) || {};
+    } catch (error) {
+      console.alert("spjx_settings invalid!");
+      return
     }
-    else {
-      console.alert("spjx_settings not found or invalid!");
-    }
+    if (spjx_settings["1"] > 10) localStorage.setItem(last_id, spjx_settings["1"]);
+    else localStorage.removeItem(last_id);
+
+
+    spjx_settings["1"] = parseInt(localStorage.getItem(id)) || 0
+    localStorage.setItem("spjx_settings", spjx_settings);
+
+    // 下面这行代码会在网页播放器加载spjx_settings之前执行，所以不执行也可以。
+    // video.currentTime = recordTime;
   }
+
   // 记录播放历史位置并设置过期
-  const recorded = JSON.parse(localStorage.getItem("m3u8_recorded")) || {}
-  const now = Date.now();
+  const data_records = JSON.parse(localStorage.getItem("data_records_m3u8")) || {}
   // "expirationDate": now + 14 * 24 * 60 * 60 * 1000;
-  recorded[id] = {
+  data_records[id] = {
     "title": title,
     "episode": episode,
     "expirationDate": now + 1209600000
   };
-  if (parseInt(lastRecordTime) || 0 < 10) delete recorded[lastID]
-  Object.keys(recorded).forEach(key => {
-    if (recorded[key].expirationDate > now) return
+  for (let key in data_records) {
+    if (data_records[key].expirationDate > now) continue;
     localStorage.removeItem(key);
-    delete recorded[key];
+    delete data_records[key];
+  }
+  localStorage.setItem("data_records_m3u8", JSON.stringify(data_records));
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(id, JSON.parse(localStorage.getItem("spjx_settings"))["1"])
   })
-  localStorage.setItem("m3u8_recorded", JSON.stringify(recorded));
 }

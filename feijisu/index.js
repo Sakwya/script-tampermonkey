@@ -1,12 +1,11 @@
 // ==UserScript==
-// @name         feijisu广告移除
+// @name         feijisu升级
 // @namespace    http://tampermonkey.net/
 // @version      2024-07-28
 // @description  try to take over the world!
-// @author       You
+// @author       sakwya
 // @match        http://feijisu35.com/*/*
 // @match        https://test3.gqyy8.com:4438/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=feijisu35.com
 // @grant        none
 // ==/UserScript==
 
@@ -16,34 +15,38 @@
   if (url.hostname == "test3.gqyy8.com") {
     return setup();
   }
-  // 选择要监视的目标节点
-  const targetNode = document;
-
-  // 配置观察器的设置（需要观察哪些变动）
+  // 先判断要移除的广告元素是否已经加载完成
+  let leftCnode = document.getElementById('HMhrefleft')
+  if (!!leftCnode) {
+    leftCnode.parentElement.remove()
+    document.getElementById('HMhrefright').parentElement.remove()
+    return
+  }
+  // 未加载完成则监听目标
+  const Observer = {}
   const config = { attributes: false, childList: true, subtree: true };
-
-  // 当节点发生变化时的回调函数
   const callback = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
-      if (mutation.type === 'childList') {
-        mutation.addedNodes.forEach(node => {
-          if (node.children.length === 0) return
-          let cid = node.children[0].id;
-          if (cid === 'HMhrefleft' || cid === 'HMhrefright') {
-            console.log(node)
-            node.remove();
-          }
-        });
+      if (mutation.type != 'childList') return;
+      for (const node of mutation.addedNodes) {
+        if (node.children.length === 0) continue;
+        let cid = node.children[0].id;
+        if (cid != 'HMhrefleft' && cid != 'HMhrefright') continue;
+        node.remove();
+        if (Observer.o) {
+          Observer.observer.disconnect();
+          console.log("监听器已移除。")
+          return 
+        } else {
+          Observer.o = true
+        }
       }
     }
   };
 
-  // 创建一个观察器实例并传入回调函数
   const observer = new MutationObserver(callback);
-
-  // 通过调用 observe() 方法，开始观察目标节点
+  Observer.observer = observer;
   observer.observe(document, config);
-
 })();
 
 function setup() {
@@ -94,6 +97,10 @@ function setup() {
         var video_length = video.duration
         time += 5;
         video.currentTime = (time < video_length) ? time : video_length;
+        break
+      case "Space":
+        if(video.paused)video.play();
+        else video.pause();
         break
     }
   })

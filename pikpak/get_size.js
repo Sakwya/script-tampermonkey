@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PikPak分享占用空间查看
 // @namespace    sakwya
-// @version      2024-06-27
+// @version      2024-08-19
 // @description  可以查看选中的文件占用的空间
 // @author       sakwya
 // @license      MIT
@@ -11,8 +11,7 @@
 // ==/UserScript==
 
 (function () {
-  'use strict';
-  // 如果出现问题可以将DEBUG改为true,在控制台查看错误信息
+  "use strict";
   const DEBUG = false;
   const debug = (ele, message = "") => {
     if (DEBUG) {
@@ -21,38 +20,49 @@
     }
   };
 
-  function makeRequest(method, url) {
-    return new Promise(function (resolve, reject) {
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(xhr.responseText);
-          } else {
-            reject(new Error('Request failed with status ' + xhr.status));
-          }
-        }
-      };
-      xhr.open(method, url, true);
-      xhr.send();
-    });
+  let progress = 0;
+  let totalRequests = 0;
+
+  async function makeRequest(method, url) {
+    try {
+      totalRequests += 1;
+      const response = await fetch(url, { method });
+      if (!response.ok) {
+        throw new Error("Request failed with status " + response.status);
+      }
+      const doc = await response.text();
+      updateProgress();
+      progress += 1;
+      return doc;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   const sessionStorage = window.sessionStorage;
   const size_pattern = /([.\d]+)[\s]*([KMGT]?B)/i;
 
-  const get_dir_size = async (url) => {
+  const display_div = document.createElement("div");
+  display_div.style.marginLeft = "auto";
+  display_div.style.marginRight = "16px";
+  display_div.innerText = "已选中: 0 B";
+  document.getElementsByClassName("file-explorer")[0].firstChild.firstChild.firstChild.appendChild(display_div);
+
+  const updateProgress = () => {
+
+    display_div.innerText = `请求中: ${((progress/totalRequests)*100).toFixed(2)}% [${progress}/${totalRequests}]`;
+  };
+  const get_dir_size = async (url, display_div) => {
     let sum = 0.0;
     try {
-      const response = await makeRequest("get", url);
+      const response = await makeRequest("GET", url);
       const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(response, 'text/html');
-      window.xmlDoc = xmlDoc;
-      const rows = xmlDoc.getElementsByClassName('row');
+      const xmlDoc = parser.parseFromString(response, "text/html");
+      const rows = Array.from(xmlDoc.getElementsByClassName("row"));
 
-      for (let i = 0; i < rows.length; i++) {
-        sum += await get_size(rows[i]) || 0;
-      }
+      const sizePromises = rows.map((row) => get_size(row, display_div));
+      const sizes = await Promise.all(sizePromises);
+      sum = sizes.reduce((acc, size) => acc + (size || 0), 0);
     } catch (e) {
       debug(e);
     }
@@ -65,32 +75,33 @@
     }
     const id = element.id;
     let size = sessionStorage.getItem(id);
-    if (size != null) return parseFloat(size);
-    const size_div = element.getElementsByClassName("size");
-    if (size_div.length === 0) {
+    if (size != null) {
+      return parseFloat(size);
+    }
+
+    const size_div = element.getElementsByClassName("size")[0];
+    if (!size_div) {
       size = await get_dir_size(`${location.href}/${id}`);
       sessionStorage.setItem(id, size);
       return size;
-    } else if (size_div.length > 1) {
-      return debug(size_div, "类名为size的子元素数量多于1");
     }
 
-    const size_str = size_div[0].innerText;
+    const size_str = size_div.innerText;
     const temp = size_str.match(size_pattern);
     if (!temp || temp.length !== 3) {
       return debug(size_str, "size正则匹配失败");
     }
+
     size = parseFloat(temp[1]);
-    const unit = temp[2];
+    const unit = temp[2].toUpperCase();
     const unitFactors = {
-      "B": 1,
-      "KB": 1024,
-      "MB": 1024 * 1024,
-      "GB": 1024 * 1024 * 1024,
-      "TB": 1024 * 1024 * 1024 * 1024
+      B: 1,
+      KB: 1024,
+      MB: 1024 * 1024,
+      GB: 1024 * 1024 * 1024,
+      TB: 1024 * 1024 * 1024 * 1024,
     };
-    const factor = unitFactors[unit.toUpperCase()] || 1;
-    size *= factor;
+    size *= unitFactors[unit] || 1;
     sessionStorage.setItem(id, size);
     return size;
   };
@@ -102,39 +113,39 @@
       size /= 1024;
       i++;
     }
-    const formattedSize = Math.ceil(size * 10) / 10; // 向上取整
-    const formattedUnit = units[i];
-    return `${formattedSize} ${formattedUnit}`;
+    return `${Math.ceil(size * 10) / 10} ${units[i]}`;
   };
-
-  const display_div = document.createElement('div');
-  display_div.style.marginLeft = 'auto';
-  display_div.style.marginRight = '16px';
-  display_div.innerText = '已选中: 0 B';
-  document.getElementsByClassName("file-explorer")[0].firstChild.firstChild.firstChild.appendChild(display_div);
 
   let pikpak_processing = false;
   let pikpak_retry = false;
-  window.addEventListener('click', async function () {
+  window.addEventListener("click", async function () {
     if (pikpak_processing) {
       pikpak_retry = true;
       return;
     }
     pikpak_processing = true;
     display_div.innerText = `已选中: 处理中……`;
-    var sum;
+
+    let sum = 0.0;
     do {
       pikpak_retry = false;
       sum = 0.0;
       if (![...document.getElementsByClassName("file-explorer")[0].firstChild.firstChild.firstChild.children].includes(display_div)) {
         document.getElementsByClassName("file-explorer")[0].firstChild.firstChild.firstChild.appendChild(display_div);
       }
-      const checked_rows = document.getElementsByClassName("checked row");
-      for (let i = 0; i < checked_rows.length; i++) {
-        sum += await get_size(checked_rows[i]) || 0;
-      }
-    } while (pikpak_retry);
 
+      const checked_rows = Array.from(
+        document.getElementsByClassName("checked row")
+      );
+
+      const sizePromises = checked_rows.map((row) =>
+        get_size(row)
+      );
+      const sizes = await Promise.all(sizePromises);
+      sum = sizes.reduce((acc, size) => acc + (size || 0), 0);
+    } while (pikpak_retry);
+    progress = 0;
+    totalRequests = 0;
     display_div.innerText = `已选中: ${formatted_size(sum)}`;
     pikpak_processing = false;
   });

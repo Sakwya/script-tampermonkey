@@ -118,7 +118,7 @@
 
   let pikpak_processing = false;
   let pikpak_retry = false;
-  window.addEventListener("click", async function () {
+  const updateSelectedSize = async () => {
     if (pikpak_processing) {
       pikpak_retry = true;
       return;
@@ -148,5 +148,12 @@
     totalRequests = 0;
     display_div.innerText = `已选中: ${formatted_size(sum)}`;
     pikpak_processing = false;
+  }
+  
+  window.addEventListener("click",updateSelectedSize);
+  window.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.key === 'a') {
+      setTimeout(updateSelectedSize, 100); // 延迟执行，确保DOM元素选中状态更新完成
+    }
   });
 })();
